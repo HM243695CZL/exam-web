@@ -1,0 +1,99 @@
+{
+	"name": "vue-next-admin-template",
+	"version": "2.2.0",
+	"description": "vue3 vite next admin template",
+	"author": "lyt_20201208",
+	"license": "MIT",
+	"scripts": {
+		"dev": "vite --force",
+		"build": "vite build",
+		"lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/"
+	},
+	"dependencies": {
+		"@element-plus/icons-vue": "^2.0.6",
+		"@form-create/designer": "^3.0.2",
+		"@form-create/element-ui": "^3.1.15",
+		"@kangc/v-md-editor": "^2.3.15",
+		"@wangeditor/editor": "^5.1.22",
+		"@wangeditor/editor-for-vue": "^5.1.12",
+		"axios": "^0.27.2",
+		"dayjs": "^1.11.7",
+		"docx-preview": "^0.1.14",
+		"echarts": "^5.3.3",
+		"element-plus": "^2.2.9",
+		"js-cookie": "^3.0.1",
+		"lodash": "^4.17.21",
+		"mitt": "^3.0.0",
+		"nprogress": "^0.2.0",
+		"pinia": "^2.0.16",
+		"prismjs": "^1.29.0",
+		"qrcodejs2-fixes": "^0.0.2",
+		"screenfull": "^6.0.2",
+		"sortablejs": "^1.15.0",
+		"tui-image-editor": "^3.15.3",
+		"vite-plugin-prismjs": "^0.0.8",
+		"vue": "^3.2.37",
+		"vue-clipboard3": "^2.0.0",
+		"vue-pdf-embed": "^1.1.5",
+		"vue-router": "^4.1.2",
+		"vue3-pdfjs": "^0.1.6",
+		"vxe-table": "^4.3.5",
+		"xe-utils": "^3.5.7",
+		"xgplayer": "^2.32.2",
+		"xgplayer-flv.js": "^2.3.0"
+	},
+	"devDependencies": {
+		"@types/axios": "^0.14.0",
+		"@types/clipboard": "^2.0.1",
+		"@types/node": "^18.0.5",
+		"@types/nprogress": "^0.2.0",
+		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/parser": "^5.30.6",
+		"@vitejs/plugin-vue": "^2.3.3",
+		"@vue/compiler-sfc": "^3.2.37",
+		"consola": "^2.15.3",
+		"dotenv": "^16.0.1",
+		"eslint": "^8.19.0",
+		"eslint-plugin-vue": "^9.2.0",
+		"prettier": "^2.7.1",
+		"sass": "^1.53.0",
+		"sass-loader": "^13.0.2",
+		"typescript": "^4.7.4",
+		"unplugin-auto-import": "^0.11.4",
+		"unplugin-vue-components": "^0.22.9",
+		"vite": "^2.9.14",
+		"vite-plugin-style-import": "^2.0.0",
+		"vue-eslint-parser": "^9.0.3"
+	},
+	"browserslist": [
+		"> 1%",
+		"last 2 versions",
+		"not dead"
+	],
+	"bugs": {
+		"url": "https://gitee.com/lyt-top/vue-next-admin/issues"
+	},
+	"engines": {
+		"node": ">=12.0.0",
+		"npm": ">= 6.0.0"
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"vuejs/vue-next",
+		"vuejs/vue-next-template",
+		"element-ui",
+		"element-plus",
+		"vue-next-admin",
+		"next-admin"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://gitee.com/lyt-top/vue-next-admin.git"
+	},
+	"eslintConfig": {
+		"rules": {
+			"no-mixed-spaces-and-tabs": 0
+		}
+	}
+}
