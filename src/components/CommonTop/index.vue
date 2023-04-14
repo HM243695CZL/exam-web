@@ -70,6 +70,9 @@
 			&-right{
 				display: flex;
 				justify-content: flex-end;
+				button{
+					margin-left: 10px;
+				}
 			}
 		}
 	}

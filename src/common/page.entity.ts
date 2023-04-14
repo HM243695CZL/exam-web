@@ -10,5 +10,5 @@ export class PageEntity {
 	/**
 	 * 总记录数
 	 */
-	totalRecords = 1;
+	totalRecords = 0;
 }

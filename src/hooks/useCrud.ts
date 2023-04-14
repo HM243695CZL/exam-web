@@ -12,11 +12,15 @@ interface ICrudParams {
 		delete?: string, // 单个删除接口
 	},
 	parentRef?: any, // 父级ref
+	isMountedLoad?: boolean, // 是否挂载后请求数据
+	otherParams?: any // 其他请求参数
 }
 
 export default function({
 													uris,
-													parentRef
+													parentRef,
+													isMountedLoad = true,
+													otherParams
 												}: ICrudParams) {
 	const tableRef = ref();
 	const modalFormRef = ref();
@@ -44,7 +48,8 @@ export default function({
 		const reqMethod = uris.pageMethod ? uris.pageMethod : 'post';
 		actionMap[reqMethod](uris.page, {
 			...state.pageInfo,
-			...state.searchParams
+			...state.searchParams,
+			...otherParams
 		}).then(res => {
 			if (res.status === StatusEnum.SUCCESS) {
 				if (parentRef) {
@@ -180,7 +185,9 @@ export default function({
 		return tableRef.value.rowConfig.keyField || '';
 	});
 	onMounted(() => {
-		getDataList();
+		if (isMountedLoad) {
+			getDataList();
+		}
 	});
 	return {
 		tableRef,

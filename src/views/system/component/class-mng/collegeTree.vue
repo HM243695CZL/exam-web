@@ -31,7 +31,7 @@ import {
 	getCollegeMajorListApi,
 	updateCollegeMajorApi,
 	viewCollegeMajorApi,
-} from '/@/api/system/student';
+} from '/@/api/system/class-mng';
 import CollegeMajorModal from './collegeMajorModal.vue';
 import { onMounted, reactive, ref } from 'vue';
 import { getAction } from '/@/api/common';
@@ -57,7 +57,10 @@ const getCollegeMajorList = () => {
 			state.collegeMajorList = res.data;
 			if (res.data.length) {
 				state.currentNode = res.data[0].id;
-				emits('clickNode', res.data[0]);
+				emits('clickNode', {
+					node: res.data[0],
+					collegeList: state.collegeMajorList
+				});
 			}
 		}
 	})
@@ -103,8 +106,12 @@ const clickDeleteCollege = (data, e) => {
 	})
 };
 const clickNode = (data) => {
-	emits('clickNode', data.data);
-}
+	state.currentNode = data.id;
+	emits('clickNode', {
+		node: data.data,
+		collegeList: state.collegeMajorList
+	});
+};
 onMounted(() => {
 	getCollegeMajorList();
 });

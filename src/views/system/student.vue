@@ -1,31 +1,22 @@
 <template>
 	<div class='student-container h100'>
-		<div class='box h100'>
-			<div class='tree-box h100'>
-				<CollegeTree @clickNode='clickNode' />
-			</div>
-			<div class='content-box h100'>
-				list
-			</div>
-		</div>
+		学生管理
 	</div>
 </template>
 
 <script lang='ts'>
-import { defineComponent } from 'vue';
-import CollegeTree from './component/student/collegeTree.vue';
+import { defineComponent, reactive, ref, toRefs } from 'vue';
 
 export default defineComponent({
 	name: 'student',
-	components: {
-		CollegeTree
-	},
+	components: {},
 	setup() {
-		const clickNode = data => {
-			console.log(data);
-		}
+		const collegeTreeRef = ref();
+		const state = reactive({
+		});
 		return {
-			clickNode
+			collegeTreeRef,
+			...toRefs(state),
 		}
 	}
 });
@@ -44,6 +35,7 @@ export default defineComponent({
 			}
 			.content-box{
 				flex: 1;
+				padding: 15px;
 			}
 		}
 	}

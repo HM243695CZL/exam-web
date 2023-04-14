@@ -23,7 +23,7 @@
 <script lang='ts' setup>
 import { reactive, ref } from 'vue';
 import { postAction } from '/@/api/common';
-import { createCollegeMajorApi, updateCollegeMajorApi } from '/@/api/system/student';
+import { createCollegeMajorApi, updateCollegeMajorApi } from '/@/api/system/class-mng';
 import { StatusEnum } from '/@/common/status.enum';
 import { ElMessage } from 'element-plus';
 
