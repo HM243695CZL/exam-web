@@ -1,5 +1,5 @@
 <template>
-	<div class='student-container h100' ref='studentRef'>
+	<div class='teacher-container h100' ref='teacherRef'>
 		<CommonTop
 			@clickSearch="clickSearch"
 			@clickReset="clickReset"
@@ -9,11 +9,14 @@
 				<el-form-item label="姓名">
 					<el-input v-model="searchParams.name" placeholder="请输入姓名" clearable></el-input>
 				</el-form-item>
-				<el-form-item label="学号">
-					<el-input v-model="searchParams.number" placeholder="请输入学号" clearable></el-input>
+				<el-form-item label="工号">
+					<el-input v-model="searchParams.number" placeholder="请输入工号" clearable></el-input>
 				</el-form-item>
-				<el-form-item label="手机号">
-					<el-input v-model="searchParams.phone" placeholder="请输入手机号" clearable></el-input>
+				<el-form-item label="邮箱">
+					<el-input v-model="searchParams.email" placeholder="请输入邮箱" clearable></el-input>
+				</el-form-item>
+				<el-form-item label="电话">
+					<el-input v-model="searchParams.phone" placeholder="请输入电话" clearable></el-input>
 				</el-form-item>
 			</template>
 		</CommonTop>
@@ -28,10 +31,10 @@
 		>
 			<vxe-column type="seq" title="序号" width="60" />
 			<vxe-column title="姓名" field="name" />
-			<vxe-column title="学号" field="number" />
-			<vxe-column title="学院" field="collegeName" />
-			<vxe-column title="专业" field="majorName" />
-			<vxe-column title="班级" field="className" />
+			<vxe-column title="工号" field="number" />
+			<vxe-column title="部门" field="deptName" />
+			<vxe-column title="电话" field="phone" />
+			<vxe-column title="邮箱" field="email" />
 			<vxe-column title="性别" field="sex">
 				<template #default='scope'>
 					<el-tag>
@@ -39,17 +42,9 @@
 					</el-tag>
 				</template>
 			</vxe-column>
-			<vxe-column title="生日" field="birthday" />
-			<vxe-column title="电话" field="phone" />
 			<vxe-column title="头像" field="avatar">
 				<template #default='scope'>
 					<PreviewImg :img-url='scope.row.avatar' />
-				</template>
-			</vxe-column>
-			<vxe-column title="状态" field="status">
-				<template #default='scope'>
-					<el-tag v-if='scope.row.status === 1'>启用</el-tag>
-					<el-tag v-if='scope.row.status === 0' type='info'>禁用</el-tag>
 				</template>
 			</vxe-column>
 			<vxe-column title='操作' width='260'>
@@ -72,47 +67,53 @@
 			:view-path='configObj.viewPath'
 			@refreshList='getDataList'
 		>
-			<StudentModal ref='childRef' :college-list='collegeList' />
+			<TeacherModal :dept-list='deptList' ref='childRef' />
 		</CommonModal>
 	</div>
 </template>
 
 <script lang='ts'>
-import { onMounted, reactive, ref, toRefs } from 'vue';
+import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import CommonModal from '/@/components/CommonModal/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
-import StudentModal from './component/student/studentModal.vue';
+import TeacherModal from './component/teacher/teacherModal.vue';
 import PreviewImg from '/@/components/previewImg/index.vue';
-import { createStudentApi, deleteStudentApi, getStudentPageApi, updateStudentApi, viewStudentApi } from '/@/api/system/student';
+import {
+	createTeacherApi,
+	deleteTeacherApi,
+	getTeacherPageApi,
+	updateTeacherApi,
+	viewTeacherApi,
+} from '/@/api/system/teacher';
 import useCrud from '/@/hooks/useCrud';
 import { getAction } from '/@/api/common';
-import { getCollegeMajorListApi } from '/@/api/system/class-mng';
+import { getDeptListApi } from '/@/api/system/dept';
 import { StatusEnum } from '/@/common/status.enum';
 
-export default {
-	name: 'student',
+export default defineComponent({
+	name: 'teacher',
 	components: {
 		CommonTop,
 		CommonModal,
 		PaginationCommon,
-		StudentModal,
+		TeacherModal,
 		PreviewImg
 	},
 	setup() {
-		const studentRef = ref();
+		const teacherRef = ref();
 		const state = reactive({
 			uris: {
-				page: getStudentPageApi,
-				delete: deleteStudentApi
+				page: getTeacherPageApi,
+				delete: deleteTeacherApi
 			},
 			configObj: {
-				title: '学生',
-				createPath: createStudentApi,
-				updatePath: updateStudentApi,
-				viewPath: viewStudentApi
+				title: '老师',
+				createPath: createTeacherApi,
+				updatePath: updateTeacherApi,
+				viewPath: viewTeacherApi
 			},
-			collegeList: []
+			deptList: []
 		});
 		const {
 			tableRef,
@@ -132,20 +133,20 @@ export default {
 			changePageSize
 		} = useCrud({
 			uris: state.uris,
-			parentRef: studentRef
+			parentRef: teacherRef
 		});
-		const getCollegeList = () => {
-			getAction(getCollegeMajorListApi, '').then(res => {
+		const getDeptList = () => {
+			getAction(getDeptListApi, '').then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
-					state.collegeList = res.data;
+					state.deptList = res.data;
 				}
-			})
+			});
 		};
 		onMounted(() => {
-			getCollegeList();
+			getDeptList();
 		});
 		return {
-			studentRef,
+			teacherRef,
 			...toRefs(state),
 
 			tableRef,
@@ -165,11 +166,11 @@ export default {
 			changePageSize
 		}
 	}
-}
+});
 </script>
 
 <style scoped lang='scss'>
-	.student-container{
+	.teacher-container{
 		padding: 20px;
 		overflow: auto;
 	}
