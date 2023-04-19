@@ -28,7 +28,9 @@
 			<vxe-column title="班级" field="className" />
 			<vxe-column title="性别" field="sex">
 				<template #default='scope'>
-					{{scope.row.sex ? '男' : '女'}}
+					<el-tag>
+						{{scope.row.sex === 0 ? '男' : '女'}}
+					</el-tag>
 				</template>
 			</vxe-column>
 			<vxe-column title="生日" field="birthday" />
@@ -40,7 +42,14 @@
 			</vxe-column>
 			<vxe-column title="状态" field="status">
 				<template #default='scope'>
-					{{scope.row.status ? '禁用' : '启用'}}
+					<el-tag v-if='scope.row.status === 1'>启用</el-tag>
+					<el-tag v-if='scope.row.status === 0' type='info'>禁用</el-tag>
+				</template>
+			</vxe-column>
+			<vxe-column title='操作' width='260'>
+				<template #default='scope'>
+					<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
+					<el-button size='small' type='danger' @click='clickDelete(scope.row.id)'>删除</el-button>
 				</template>
 			</vxe-column>
 		</vxe-table>
