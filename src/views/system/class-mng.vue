@@ -26,6 +26,8 @@
 					:max-height='tableHeight'
 				>
 					<vxe-column type="seq" title="序号" width="60" />
+					<vxe-column title="学院名称" field="collegeName" />
+					<vxe-column title="专业名称" field="majorName" />
 					<vxe-column title="班级名称" field="name" />
 				</vxe-table>
 				<PaginationCommon

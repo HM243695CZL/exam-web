@@ -48,7 +48,7 @@ const state = reactive({
 const openDialog = (row: any) => {
 	state.isShowDialog = true;
 	state.ruleForm = row;
-	state.ruleForm.type = row.parendId ? 0 : 1;
+	state.ruleForm.type = row.parentId ? 0 : 1;
 	if (row.id) {
 		// 编辑
 		state.title = '编辑学院/专业';

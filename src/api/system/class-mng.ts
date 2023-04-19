@@ -8,6 +8,7 @@ export const viewCollegeMajorApi = `${collegeMajorBaseApi}view`;
 
 
 export const classBaseApi = 'admin/class-mng/';
+export const getClassListApi = `${classBaseApi}list`;
 export const getClassPageApi = `${classBaseApi}page`;
 export const createClassApi = `${classBaseApi}create`;
 export const updateClassApi = `${classBaseApi}update`;

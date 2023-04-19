@@ -12,12 +12,14 @@
 			</el-select>
 		</el-form-item>
 		<el-form-item label='专业' prop='major'>
-			<el-select v-model='state.ruleForm.major' class='w100' filterable>
+			<el-select v-model='state.ruleForm.major' class='w100' filterable @change='changeMajor'>
 				<el-option v-for='item in state.majorList' :key='item.id' :label='item.name' :value='item.id'></el-option>
 			</el-select>
 		</el-form-item>
-		<el-form-item label='班级名称' prop='className'>
-			<el-input v-model='state.ruleForm.className' placeholder='请输入班级名称' clearable></el-input>
+		<el-form-item label='班级名称' prop='classId'>
+			<el-select v-model='state.ruleForm.classId' class='w100' filterable>
+				<el-option v-for='item in state.classList' :key='item.id' :label='item.name' :value='item.id'></el-option>
+			</el-select>
 		</el-form-item>
 		<el-form-item label='头像' prop='avatar'>
 			<SingleUpload :source-url="state.ruleForm.avatar" @change-source-url="changeAvatar" />
@@ -40,7 +42,7 @@
 			</el-radio-group>
 		</el-form-item>
 		<el-form-item label='状态' prop='status'>
-			<el-radio-group v-model="state.ruleForm.sex">
+			<el-radio-group v-model="state.ruleForm.status">
 				<el-radio :label="0" size="large">禁用</el-radio>
 				<el-radio :label="1" size="large">启用</el-radio>
 			</el-radio-group>
@@ -51,6 +53,9 @@
 <script lang='ts' setup>
 import { reactive, ref } from 'vue';
 import SingleUpload from '/@/components/Upload/SingleUpload.vue';
+import { getClassListApi } from '/@/api/system/class-mng';
+import { postAction } from '/@/api/common';
+import { StatusEnum } from '/@/common/status.enum';
 
 const props = defineProps({
 	collegeList: {
@@ -66,7 +71,7 @@ const state = reactive({
 		number: '',
 		college: '',
 		major: '',
-		className: '',
+		classId: '',
 		avatar: '',
 		birthday: '',
 		phone: '',
@@ -81,7 +86,8 @@ const state = reactive({
 			{ required: true, message: '学号不能为空', trigger: 'blur'}
 		]
 	},
-	majorList: []
+	majorList: [],
+	classList: []
 });
 const changeCollege = data => {
 	props.collegeList.map((item: any) => {
@@ -90,6 +96,15 @@ const changeCollege = data => {
 		}
 	})
 };
+const changeMajor = majorId => {
+	postAction(getClassListApi, {
+		majorId
+	}).then(res => {
+		if (res.status === StatusEnum.SUCCESS) {
+			state.classList = res.data;
+		}
+	})
+}
 const changeAvatar = (url: string) => {
 	state.ruleForm.avatar = url;
 };
