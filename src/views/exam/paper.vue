@@ -1,5 +1,5 @@
 <template>
-	<div class='paper-container'>
+	<div class='paper-container' ref='paperRef'>
 		<div class='box h100'>
 			<div class='tree-box h100'>
 				<TypeTree
@@ -12,14 +12,69 @@
 				/>
 			</div>
 			<div class='content-box h100'>
-				试题库
+				<CommonTop
+					@clickSearch="clickSearch"
+					@clickReset="clickReset"
+					@clickAdd="clickAdd"
+				>
+					<template #left>
+						<el-form-item label="题目">
+							<el-input v-model="searchParams.question" placeholder="请输入题目" clearable></el-input>
+						</el-form-item>
+					</template>
+				</CommonTop>
+				<vxe-table
+					ref='tableRef'
+					:row-config='{
+						useKey: true,
+						keyField: "id"
+					}'
+					:data='dataList'
+					:max-height='tableHeight'
+				>
+					<vxe-column type="seq" title="序号" width="60" />
+					<vxe-column title="题目" field="question" />
+					<vxe-column title="题型" field="type">
+						<template #default="scope">
+							{{typeMap[scope.row.type]}}
+						</template>
+					</vxe-column>
+					<vxe-column title="试题分类" field="questionTypeName" />
+					<vxe-column title='难度' field='difficulty'>
+						<template #default="scope">
+							{{difficultyMap[scope.row.difficulty]}}
+						</template>
+					</vxe-column>
+					<vxe-column title="添加时间" field="addTime" />
+					<vxe-column title="操作" width="200">
+						<template #default="scope">
+							<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
+							<el-button size='small' type='danger' @click="clickDelete(scope.row.id)">删除</el-button>
+						</template>
+					</vxe-column>
+				</vxe-table>
+				<PaginationCommon
+					:page-info='pageInfo'
+					@changePageSize='changePageSize'
+					@changePageIndex='changePageIndex'
+				/>
+				<CommonModal
+					ref='modalFormRef'
+					:title='configObj.title'
+					:create-path='configObj.createPath'
+					:update-path='configObj.updatePath'
+					:view-path='configObj.viewPath'
+					@refreshList='getDataList'
+				>
+					<PaperModal :question-type-list='questionTypeList' ref='childRef' />
+				</CommonModal>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang='ts'>
-import { defineComponent, reactive, toRefs } from 'vue';
+import { defineComponent, reactive, ref, toRefs } from 'vue';
 import {
 	createPaperTypeApi,
 	deletePaperTypeApi,
@@ -27,13 +82,24 @@ import {
 	updatePaperTypeApi,
 } from '/@/api/exam/paper-type';
 import TypeTree from '/@/components/TypeTree/index.vue';
+import CommonTop from '/@/components/CommonTop/index.vue';
+import CommonModal from '/@/components/CommonModal/index.vue';
+import PaginationCommon from '/@/components/PaginationCommon/index.vue';
+import PaperModal from './component/paperModal.vue';
+import { createPaperApi, deletePaperApi, getPaperPageApi, updatePaperApi, viewPaperApi } from '/@/api/exam/paper';
+import useCrud from '/@/hooks/useCrud';
 
 export default defineComponent({
 	name: 'paper',
 	components: {
-		TypeTree
+		TypeTree,
+		CommonTop,
+		PaginationCommon,
+		CommonModal,
+		PaperModal
 	},
 	setup() {
+		const paperRef = ref();
 		const state = reactive({
 			configTreeObj: {
 				title: '试题分类',
@@ -41,14 +107,73 @@ export default defineComponent({
 				updatePath: updatePaperTypeApi,
 				getListPath: getPaperTypeListApi,
 				deletePath: deletePaperTypeApi
+			},
+			uris: {
+				page: getPaperPageApi,
+				delete: deletePaperApi
+			},
+			configObj: {
+				title: '试题',
+				createPath: createPaperApi,
+				updatePath: updatePaperApi,
+				viewPath: viewPaperApi
+			},
+			questionTypeList: [],
+			typeMap: {
+				1: '单选题',
+				2: '多选题',
+				3: '判断题',
+				4: '简答题'
+			},
+			difficultyMap: {
+				1: '简单',
+				2: '一般',
+				3: '困难'
 			}
 		});
+		const {
+			tableRef,
+			modalFormRef,
+			childRef,
+			pageInfo,
+			dataList,
+			tableHeight,
+			searchParams,
+			getDataList,
+			clickAdd,
+			clickEdit,
+			clickSearch,
+			clickReset,
+			clickDelete,
+			changePageIndex,
+			changePageSize
+		} = useCrud({
+			uris: state.uris,
+			parentRef: paperRef
+		});
 		const clickNode = data => {
-			console.log(data);
+			state.questionTypeList = data.dataList;
 		}
 		return {
+			paperRef,
 			...toRefs(state),
-			clickNode
+			clickNode,
+
+			tableRef,
+			modalFormRef,
+			childRef,
+			pageInfo,
+			dataList,
+			tableHeight,
+			searchParams,
+			getDataList,
+			clickAdd,
+			clickEdit,
+			clickSearch,
+			clickReset,
+			clickDelete,
+			changePageIndex,
+			changePageSize
 		}
 	}
 });
