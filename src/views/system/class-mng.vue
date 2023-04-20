@@ -2,7 +2,14 @@
 	<div class='class-mng-container' ref='classRef'>
 		<div class='box h100'>
 			<div class='tree-box h100'>
-				<CollegeTree ref='collegeTreeRef' @clickNode='clickNode($event)' />
+				<TypeTree
+					:title='treeObj.title'
+					:create-path='treeObj.createPath'
+					:update-path='treeObj.updatePath'
+					:get-list-path='treeObj.getListPath'
+					:delete-path='treeObj.deletePath'
+					@clickNode='clickNode($event)'
+				/>
 			</div>
 			<div class='content-box h100'>
 				<CommonTop
@@ -54,28 +61,28 @@
 
 <script lang='ts'>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
-import CollegeTree from './component/class-mng/collegeTree.vue';
 import ClassMngModal from './component/class-mng/classMngModal.vue';
 import CommonModal from '/@/components/CommonModal/index.vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
+import TypeTree from '/@/components/TypeTree/index.vue';
 import useCrud from '/@/hooks/useCrud';
 import {
-	createClassApi,
-	deleteClassApi,
-	getClassPageApi,
-	updateClassApi,
+	createClassApi, createCollegeMajorApi,
+	deleteClassApi, deleteCollegeMajorApi,
+	getClassPageApi, getCollegeMajorListApi,
+	updateClassApi, updateCollegeMajorApi,
 	viewClassApi,
 } from '/@/api/system/class-mng';
 
 export default defineComponent({
 	name: 'class-mng',
 	components: {
-		CollegeTree,
 		CommonTop,
 		PaginationCommon,
 		CommonModal,
-		ClassMngModal
+		ClassMngModal,
+		TypeTree
 	},
 	setup() {
 		const classRef = ref();
@@ -95,6 +102,13 @@ export default defineComponent({
 			params: {
 				collegeId: '',
 				majorId: ''
+			},
+			treeObj: {
+				title: '学院/专业',
+				createPath: createCollegeMajorApi,
+				updatePath: updateCollegeMajorApi,
+				getListPath: getCollegeMajorListApi,
+				deletePath: deleteCollegeMajorApi
 			}
 		});
 		const clickNode = data => {
@@ -108,7 +122,7 @@ export default defineComponent({
 				state.params.collegeId = data.node.id;
 			}
 			state.currentNode = data.node.id;
-			state.collegeList = data.collegeList;
+			state.collegeList = data.dataList;
 			getDataList();
 		};
 		const {
@@ -156,10 +170,6 @@ export default defineComponent({
 		}
 	}
 });
-class Params {
-	collegeId: string | undefined;
-	majorId: string | undefined;
-}
 </script>
 
 <style scoped lang='scss'>
