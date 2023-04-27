@@ -12,21 +12,27 @@ import { initFrontEndControlRoutes } from '/@/router/frontEnd';
 /**
  * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。
  * 2、后端控制路由时：isRequestRoutes 为 true，不需要写 roles，不需要走 setFilterRoute 方法），
+ * 相关方法已拆解到对应的`frontEnd.ts`（他们互不影响，不需要同时改 2 个文件）。
  * 特别说明：
  * 1、前端控制：路由菜单由前端去写（无菜单管理界面，有角色管理界面），角色管理中有 roles 属性，需返回到 userInfo 中。
  * 2、后端控制：路由菜单由后端返回（有菜单管理界面、有角色管理界面）
  */
 
-// 读取 `/src/stores/themeConfig.ts` 是否开启后端控制路由配置
 
 /**
  * 创建一个可以被 Vue 应用程序使用的路由实例
  * @method createRouter(options: RouterOptions): Router
  * @link 参考：https://next.router.vuejs.org/zh/api/#createrouter
  */
+/**
+ * 说明：
+ * 1、notFoundAndNoPower 默认添加 404、401 界面，防止一直提示 No match found for location with path 'xxx'
+ * 2、frontEnd.ts(前端控制路由) 中也需要加 notFoundAndNoPower 404、401 界面。
+ *    防止 404、401 不在 layout 布局中，不设置的话，404、401 界面将全屏显示
+ */
 export const router = createRouter({
 	history: createWebHashHistory(),
-	routes: staticRoutes,
+	routes:staticRoutes
 });
 
 /**

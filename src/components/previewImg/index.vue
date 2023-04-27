@@ -1,7 +1,7 @@
 <template>
 	<div class='preview-img-container'>
 		<img :src='imgUrl' alt='' class='img50' @click='showImg'>
-		<el-dialog title='预览' append-to-body v-model='dialogVisible' width='1000px'>
+		<el-dialog title='预览' append-to-body v-model='dialogVisible' width='800px'>
 			<img class='modal-img' :src='imgUrl' alt=''>
 			<template #footer>
 				<span class="dialog-footer">

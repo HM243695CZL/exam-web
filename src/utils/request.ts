@@ -1,6 +1,7 @@
-import axios from 'axios';
-import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
+import axios, { AxiosInstance } from 'axios';
+import { ElMessage, ElMessageBox, ElLoading} from 'element-plus';
 import { Session } from '/@/utils/storage';
+import axiosRetry from 'axios-retry';
 
 let loadingReqCount = 0;
 let loadingInstance: any;
@@ -21,10 +22,9 @@ const hideLoading = () => {
 	}
 }
 
-
 // 配置新建一个 axios 实例
-const service = axios.create({
-	baseURL: import.meta.env.VITE_API_URL as any,
+const service: AxiosInstance = axios.create({
+	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 50000,
 	headers: { 'Content-Type': 'application/json' },
 });
@@ -35,7 +35,7 @@ service.interceptors.request.use(
 		showLoading();
 		// 在发送请求之前做些什么 token
 		if (Session.get('token')) {
-			(<any>config.headers).common['Authorization'] = `Bearer ${Session.get('token')}`;
+			config.headers!['Authorization'] = `Bearer ${Session.get('token')}`;
 		}
 		return config;
 	},
@@ -44,6 +44,18 @@ service.interceptors.request.use(
 		return Promise.reject(error);
 	}
 );
+
+// 请求失败重试次数
+axiosRetry(service, {
+	retries: 3, // 重试次数
+	retryCondition: err => { // 触发条件
+		return err.message.indexOf('404') > -1 || err.message.indexOf('Network') > -1;
+	},
+	shouldResetTimeout: true,
+	retryDelay: () => {
+		return 0.5 * 1000;
+	}
+});
 
 // 添加响应拦截器
 service.interceptors.response.use(

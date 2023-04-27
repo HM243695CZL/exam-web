@@ -1,4 +1,5 @@
 import request from '/@/utils/request';
+import Other from '/@/utils/other';
 
 export const reviewFileUrl = '';
 
@@ -10,11 +11,11 @@ export function postAction(url: string, data: any) {
 	})
 }
 
-export function getAction(url: string, data: any) {
+export function getAction(urlStr: string, data) {
+	const url = data ? urlStr + '?' + Other.getParams(data) : urlStr;
 	return request({
 		url,
 		method: 'get',
-		data
 	})
 }
 

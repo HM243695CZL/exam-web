@@ -1,13 +1,11 @@
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import { defineConfig, loadEnv, ConfigEnv } from 'vite';
-import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import';
-import prismjs from 'vite-plugin-prismjs';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
+import viteCompression from 'vite-plugin-compression';
+import { buildConfig } from './src/utils/build';
 
-const pathResolve = (dir: string): any => {
+const pathResolve = (dir: string) => {
 	return resolve(__dirname, '.', dir);
 };
 
@@ -18,31 +16,18 @@ const alias: Record<string, string> = {
 const viteConfig = defineConfig((mode: ConfigEnv) => {
 	const env = loadEnv(mode.mode, process.cwd());
 	return {
-		plugins: [
-			vue(),
-			// 按需导入vxe-table
-			createStyleImportPlugin({
-				resolves: [
-					VxeTableResolve()
-				]
-			}),
-			prismjs({
-				languages: ['xml', 'json', 'js', 'css', 'html']
-			})
-			// AutoImport({
-			// 	resolvers: [ElementPlusResolver()],
-			// }),
-			// Components({
-			// 	resolvers: [ElementPlusResolver()],
-			// })
-		],
+		plugins: [vue(), vueSetupExtend(), viteCompression(), JSON.parse(env.VITE_OPEN_CDN) ? buildConfig.cdn() : null],
 		root: process.cwd(),
 		resolve: { alias },
 		base: mode.command === 'serve' ? './' : env.VITE_PUBLIC_PATH,
+		optimizeDeps: {
+			exclude: ['vue-demi'],
+		},
 		server: {
 			host: '0.0.0.0',
 			port: env.VITE_PORT as unknown as number,
-			open: env.VITE_OPEN,
+			open: JSON.parse(env.VITE_OPEN),
+			hmr: true,
 			proxy: {
 				'/gitee': {
 					target: 'https://gitee.com',
@@ -54,22 +39,26 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 		},
 		build: {
 			outDir: 'dist',
-			sourcemap: false,
 			chunkSizeWarningLimit: 1500,
 			rollupOptions: {
 				output: {
-					entryFileNames: `assets/[name].${new Date().getTime()}.js`,
-					chunkFileNames: `assets/[name].${new Date().getTime()}.js`,
-					assetFileNames: `assets/[name].${new Date().getTime()}.[ext]`,
-					compact: true,
-					manualChunks: {
-						vue: ['vue', 'vue-router', 'pinia'],
-						echarts: ['echarts'],
+					chunkFileNames: 'assets/js/[name]-[hash].js',
+					entryFileNames: 'assets/js/[name]-[hash].js',
+					assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+					manualChunks(id) {
+						if (id.includes('node_modules')) {
+							return id.toString().match(/\/node_modules\/(?!.pnpm)(?<moduleName>[^\/]*)\//)?.groups!.moduleName ?? 'vender';
+						}
 					},
 				},
+				...(JSON.parse(env.VITE_OPEN_CDN) ? { external: buildConfig.external } : {}),
 			},
 		},
 		css: { preprocessorOptions: { css: { charset: false } } },
+		define: {
+			__NEXT_VERSION__: JSON.stringify(process.env.npm_package_version),
+			__NEXT_NAME__: JSON.stringify(process.env.npm_package_name),
+		},
 	};
 });
 

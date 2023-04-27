@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { ThemeConfigStates, ThemeConfigState } from './interface';
 
 /**
  * 布局配置
@@ -10,7 +9,7 @@ import { ThemeConfigStates, ThemeConfigState } from './interface';
  * 2、或者点击布局配置最底部 `一键恢复默认` 按钮即可看到效果
  */
 export const useThemeConfig = defineStore('themeConfig', {
-	state: (): ThemeConfigStates => ({
+	state: (): ThemeConfigState => ({
 		themeConfig: {
 			// 是否开启布局配置抽屉
 			isDrawer: false,
@@ -24,10 +23,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			isIsDark: false,
 
 			/**
-			 * 菜单 / 顶栏
-			 * 注意：v1.0.17 版本去除设置布局切换，重置主题样式（initSetLayoutChange），
-			 * 切换布局需手动设置样式，设置的样式自动同步各布局，
-			 * 代码位置：/@/layout/navBars/breadcrumb/setings.vue
+			 * 顶栏设置
 			 */
 			// 默认顶栏导航背景颜色
 			topBar: '#ffffff',
@@ -35,18 +31,30 @@ export const useThemeConfig = defineStore('themeConfig', {
 			topBarColor: '#606266',
 			// 是否开启顶栏背景颜色渐变
 			isTopBarColorGradual: false,
+
+			/**
+			 * 菜单设置
+			 */
 			// 默认菜单导航背景颜色
 			menuBar: '#545c64',
 			// 默认菜单导航字体颜色
 			menuBarColor: '#eaeaea',
+			// 默认菜单高亮背景色
+			menuBarActiveColor: 'rgba(0, 0, 0, 0.2)',
 			// 是否开启菜单背景颜色渐变
 			isMenuBarColorGradual: false,
+
+			/**
+			 * 分栏设置
+			 */
 			// 默认分栏菜单背景颜色
 			columnsMenuBar: '#545c64',
 			// 默认分栏菜单字体颜色
 			columnsMenuBarColor: '#e6e6e6',
 			// 是否开启分栏菜单背景颜色渐变
 			isColumnsMenuBarColorGradual: false,
+			// 是否开启分栏菜单鼠标悬停预加载(预览菜单)
+			isColumnsMenuHoverPreload: false,
 
 			/**
 			 * 界面设置
@@ -56,7 +64,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启菜单手风琴效果
 			isUniqueOpened: false,
 			// 是否开启固定 Header
-			isFixedHeader: false,
+			isFixedHeader: true,
 			// 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
 			isFixedHeaderChange: false,
 			// 是否开启经典布局分割菜单（仅经典布局生效）
@@ -94,9 +102,9 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启色弱模式
 			isInvert: false,
 			// 是否开启水印
-			isWartermark: false,
+			isWartermark: true,
 			// 水印文案
-			wartermarkText: 'small@小柒',
+			wartermarkText: 'vue-next-admin',
 
 			/**
 			 * 其它设置
@@ -113,7 +121,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 
 			/**
 			 * 布局切换
-			 * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：/@/layout/navBars/breadcrumb/setings.vue
+			 * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：/@/layout/navBars/topBar/setings.vue
 			 * 中的 `initSetLayoutChange(设置布局切换，重置主题样式)` 方法
 			 */
 			// 布局切换：可选值"<defaults|classic|transverse|columns>"，默认 defaults
@@ -132,6 +140,8 @@ export const useThemeConfig = defineStore('themeConfig', {
 			globalTitle: 'vue-next-admin',
 			// 网站副标题（登录页顶部文字）
 			globalViceTitle: 'vueNextAdmin',
+			// 网站副标题（登录页顶部文字）
+			globalViceTitleMsg: '专注、免费、开源、维护、解疑',
 			// 默认初始语言，可选值"<zh-cn|en|zh-tw>"，默认 zh-cn
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'
@@ -140,7 +150,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 	}),
 	actions: {
 		setThemeConfig(data: ThemeConfigState) {
-			this.themeConfig = data;
+			this.themeConfig = data.themeConfig;
 		},
 	},
 });
