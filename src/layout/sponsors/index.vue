@@ -55,7 +55,7 @@ const delayShow = () => {
 };
 // 页面加载时
 onMounted(() => {
-	delayShow();
+	// delayShow();
 });
 </script>
 

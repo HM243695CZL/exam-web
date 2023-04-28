@@ -110,5 +110,6 @@ watch(
 .parent-container{
 	background: #fff;
 	height: 100%;
+	overflow-y: scroll;
 }
 </style>

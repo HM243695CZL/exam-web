@@ -1,6 +1,6 @@
 <template>
 	<div class='paper-container' ref='paperRef'>
-		<div class='box h100'>
+		<div class='box h100' v-if='pageStatus === "main"'>
 			<div class='tree-box h100'>
 				<TypeTree
 					:title='configTreeObj.title'
@@ -33,7 +33,7 @@
 					:max-height='tableHeight'
 				>
 					<vxe-column type="seq" title="序号" width="60" />
-					<vxe-column title="题目" field="question" />
+					<vxe-column type='html' title="题目" field="question" />
 					<vxe-column title="题型" field="type">
 						<template #default="scope">
 							{{typeMap[scope.row.type]}}
@@ -58,18 +58,12 @@
 					@changePageSize='changePageSize'
 					@changePageIndex='changePageIndex'
 				/>
-				<CommonModal
-					ref='modalFormRef'
-					:title='configObj.title'
-					:create-path='configObj.createPath'
-					:update-path='configObj.updatePath'
-					:view-path='configObj.viewPath'
-					@refreshList='getDataList'
-				>
-					<PaperModal :question-type-list='questionTypeList' ref='childRef' />
-				</CommonModal>
 			</div>
 		</div>
+		<PaperModal v-if='pageStatus === "info"'
+								:question-type-list='questionTypeList'
+								:data-id='dataId'
+								@clickCancel='clickCancel' />
 	</div>
 </template>
 
@@ -83,7 +77,6 @@ import {
 } from '/@/api/exam/paper-type';
 import TypeTree from '/@/components/TypeTree/index.vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
-import CommonModal from '/@/components/CommonModal/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
 import PaperModal from './component/paperModal.vue';
 import { createPaperApi, deletePaperApi, getPaperPageApi, updatePaperApi, viewPaperApi } from '/@/api/exam/paper';
@@ -95,7 +88,6 @@ export default defineComponent({
 		TypeTree,
 		CommonTop,
 		PaginationCommon,
-		CommonModal,
 		PaperModal
 	},
 	setup() {
@@ -129,7 +121,9 @@ export default defineComponent({
 				1: '简单',
 				2: '一般',
 				3: '困难'
-			}
+			},
+			pageStatus: 'main',
+			dataId: '',
 		});
 		const {
 			tableRef,
@@ -140,8 +134,6 @@ export default defineComponent({
 			tableHeight,
 			searchParams,
 			getDataList,
-			clickAdd,
-			clickEdit,
 			clickSearch,
 			clickReset,
 			clickDelete,
@@ -153,11 +145,28 @@ export default defineComponent({
 		});
 		const clickNode = data => {
 			state.questionTypeList = data.dataList;
+		};
+		const clickAdd = () => {
+			state.dataId = '';
+			state.pageStatus = 'info';
+		};
+		const clickEdit = (dataId: string) => {
+			state.dataId = dataId;
+			state.pageStatus = 'info';
+		};
+		const clickCancel = (refresh: boolean) => {
+			state.pageStatus = 'main';
+			if (refresh) {
+				getDataList();
+			}
 		}
 		return {
 			paperRef,
 			...toRefs(state),
 			clickNode,
+			clickCancel,
+			clickAdd,
+			clickEdit,
 
 			tableRef,
 			modalFormRef,
@@ -167,8 +176,6 @@ export default defineComponent({
 			tableHeight,
 			searchParams,
 			getDataList,
-			clickAdd,
-			clickEdit,
 			clickSearch,
 			clickReset,
 			clickDelete,

@@ -222,5 +222,8 @@ import { getAction, uploadAction } from '/@/api/common';
 </script>
 
 <style scoped lang='scss'>
-
+	.wang-editor-container{
+		border: 1px solid #ccc;
+		width: 100%;
+	}
 </style>

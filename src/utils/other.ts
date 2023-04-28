@@ -1,5 +1,6 @@
 import { nextTick, defineAsyncComponent } from 'vue';
 import type { App } from 'vue';
+import _ from 'lodash';
 import * as svg from '@element-plus/icons-vue';
 import router from '/@/router/index';
 import pinia from '/@/stores/index';
@@ -171,6 +172,9 @@ export function handleOpenLink(val: RouteItem) {
  */
 export function getParams(params) {
 	let str = '';
+	if (typeof params !== 'object') {
+		return str;
+	}
 	Object.keys(params).forEach(item => {
 		if (str === '') {
 			str = `${item}=${params[item]}`
@@ -179,6 +183,20 @@ export function getParams(params) {
 		}
 	});
 	return str;
+}
+
+/**
+ * 格式化表单字段
+ * @param formMap 表单对象
+ * @param resMap 返回的对象
+ */
+export function formatFormMap(formMap: Object, resMap: Object) {
+	const map = _.cloneDeep(resMap);
+	const obj = {};
+	for (const o in formMap) {
+		obj[o] = map[o];
+	}
+	return obj;
 }
 /**
  * 统一批量导出
@@ -221,6 +239,9 @@ const other = {
 	},
 	getParams: (val) => {
 		return getParams(val);
+	},
+	formatFormMap: (formMap, resMap) => {
+		return formatFormMap(formMap, resMap);
 	}
 };
 
