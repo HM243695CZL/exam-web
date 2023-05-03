@@ -12,11 +12,15 @@ interface ICrudParams {
 		delete?: string, // 单个删除接口
 	},
 	parentRef?: any, // 父级ref
+	otherSearchParams?: any, // 查询参数
+	isMountedLoad?: boolean, // 是否加载完成请求数据
 }
 
 export default function({
 													uris,
-													parentRef
+													parentRef,
+													otherSearchParams,
+													isMountedLoad = true
 												}: ICrudParams) {
 	const tableRef = ref();
 	const modalFormRef = ref();
@@ -24,7 +28,9 @@ export default function({
 	const state = reactive({
 		pageInfo: new PageEntity(),
 		dataList: [],
-		searchParams: {} as any,
+		searchParams: {
+			...otherSearchParams
+		} as any,
 		selectedRowKeys: [] as any, // 被选中的数据主键
 		selectionRows: [], // 被选中的数据行
 		tableHeight: 300
@@ -180,7 +186,11 @@ export default function({
 		return tableRef.value.rowConfig.keyField || '';
 	});
 	onMounted(() => {
-		getDataList();
+		// 清空选中行
+		tableRef.value.clearCheckboxRow();
+		if (isMountedLoad) {
+			getDataList();
+		}
 	});
 	return {
 		tableRef,

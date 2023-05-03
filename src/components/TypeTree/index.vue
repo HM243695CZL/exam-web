@@ -1,6 +1,6 @@
 <template>
 	<div class='type-tree-container'>
-		<el-button type='primary' @click='clickAddNode("", "add", $event)'>新增根分类</el-button>
+		<el-button v-if='props.hasOperateAuth' type='primary' @click='clickAddNode("", "add", $event)'>新增根分类</el-button>
 		<el-tree
 			:data='state.dataList'
 			node-key='id'
@@ -14,9 +14,9 @@
 			<template #default='{node}'>
 				<span class='node-text' @click='clickNode(node)'>
 					{{ node.label }}
-					<SvgIcon v-if='node.level <= 1' name='ele-Plus' @click='clickAddNode(node, "add", $event)'></SvgIcon>
-					<SvgIcon name='ele-Edit' @click='clickAddNode(node, "edit", $event)'></SvgIcon>
-					<SvgIcon v-if='node.childNodes.length === 0' class='delete-icon'  name='ele-Delete' @click='clickDeleteNode(node, $event)'></SvgIcon>
+					<SvgIcon v-if='props.hasOperateAuth && node.level <= 1' name='ele-Plus' @click='clickAddNode(node, "add", $event)'></SvgIcon>
+					<SvgIcon v-if='props.hasOperateAuth' name='ele-Edit' @click='clickAddNode(node, "edit", $event)'></SvgIcon>
+					<SvgIcon v-if='props.hasOperateAuth && node.childNodes.length === 0' class='delete-icon'  name='ele-Delete' @click='clickDeleteNode(node, $event)'></SvgIcon>
 				</span>
 			</template>
 		</el-tree>
@@ -55,6 +55,10 @@ const props = defineProps({
 	},
 	title: {
 		type: String
+	},
+	hasOperateAuth: {
+		type: Boolean,
+		default: true
 	}
 });
 

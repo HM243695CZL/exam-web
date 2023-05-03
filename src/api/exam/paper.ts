@@ -1,4 +1,4 @@
-export const basePaperApi = 'admin/exam/question/';
+export const basePaperApi = `admin/exam/paper/`;
 
 export const getPaperPageApi = `${basePaperApi}page`;
 export const createPaperApi = `${basePaperApi}create`;
