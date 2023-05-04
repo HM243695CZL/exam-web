@@ -117,13 +117,18 @@
 </template>
 
 <script lang='ts' setup>
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import ChooseQuestionModal from './chooseQuestionModal.vue';
 import { ElMessage } from 'element-plus';
-import { postAction } from '/@/api/common';
-import { createPaperApi } from '/@/api/exam/paper';
+import { getAction, postAction } from '/@/api/common';
+import { createPaperApi, updatePaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 
+const props = defineProps({
+	id: {
+		type: String
+	}
+});
 const emits = defineEmits([
 	'clickCancel'
 ]);
@@ -141,11 +146,33 @@ const state = reactive({
 	itemIndex: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
 	totalQuestion: 0,
 	totalScore: 0,
-	upperIndex: ['一', '二', '三' , '四', '五', '六', '七' ,'八', '九', '十', '十一', '十二']
+	upperIndex: ['一', '二', '三' , '四', '五', '六', '七' ,'八', '九', '十', '十一', '十二'],
+	paperId: ''
 });
 const clickCancel = () => {
 	emits('clickCancel', false);
 };
+const getPaperInfo = () => {
+	getAction(viewPaperApi + '/' + state.paperId, '').then(res => {
+		if (res.status === StatusEnum.SUCCESS) {
+			state.ruleForm.id = res.data.paper.id;
+			state.ruleForm.name = res.data.paper.name;
+			state.ruleForm.questionDuration = res.data.paper.questionDuration;
+			state.ruleForm.timeLimit = res.data.paper.timeLimit;
+			state.ruleForm.questionBigType = [];
+			res.data.questionBigList.map(item => {
+				state.ruleForm.questionBigType.push({
+					key: item.bigId,
+					name: item.bigName,
+					type: item.type,
+					questionList: item.questionList,
+					questionScore: item.questionScore
+				})
+			});
+			renderScoreInfo();
+		}
+	});
+}
 const clickSingle = () => {
 	state.ruleForm.questionBigType.push({
 		key: new Date().getTime(),
@@ -192,18 +219,15 @@ const renderScoreInfo = () => {
 	state.ruleForm.questionBigType.map(item => {
 		let questionScore = 0;
 		item.questionList.map(ele => {
-			questionScore += ele.score;
+			questionScore += ~~ele.score;
 		});
 		item.questionScore = questionScore;
 		totalQuestion += item.questionList.length;
-		totalScore += item.questionScore;
+		totalScore += ~~item.questionScore;
 	});
 	state.totalScore = totalScore;
 	state.totalQuestion = totalQuestion;
 };
-watch(state.ruleForm.questionBigType, () => {
-	renderScoreInfo();
-})
 const clickConfirm = () => {
 	const dataMap = {
 		id: state.ruleForm.id,
@@ -238,13 +262,22 @@ const clickConfirm = () => {
 		ElMessage.error('答题时间不能为空');
 		return false;
 	}
-	postAction(createPaperApi, dataMap).then(res => {
+	postAction(state.ruleForm.id ? updatePaperApi : createPaperApi, dataMap).then(res => {
 		if (res.status === StatusEnum.SUCCESS) {
 			ElMessage.success(res.message);
 			emits('clickCancel', true);
 		}
 	})
 };
+watch(state.ruleForm.questionBigType, () => {
+	renderScoreInfo();
+});
+onMounted(() => {
+	state.paperId = props.id as string;
+	if (props.id) {
+		getPaperInfo();
+	}
+})
 </script>
 
 <style scoped lang='scss'>

@@ -42,6 +42,7 @@
 		<PaperModal
 			v-if='pageStatus === "info"'
 			@clickCancel='clickCancel'
+			:id='currentId'
 		/>
 	</div>
 </template>
@@ -68,7 +69,8 @@ export default defineComponent({
 				page: getPaperPageApi,
 				delete: deletePaperApi
 			},
-			pageStatus: 'main'
+			pageStatus: 'main',
+			currentId: ''
 		});
 		const {
 			tableRef,
@@ -90,10 +92,12 @@ export default defineComponent({
 		});
 
 		const clickAdd = () => {
+			state.currentId = '';
 			state.pageStatus = 'info';
 		};
-		const clickEdit = data => {
-
+		const clickEdit = id => {
+			state.currentId = id;
+			state.pageStatus = 'info';
 		};
 		const clickCancel = (isRefresh: boolean) => {
 			state.pageStatus = 'main';
