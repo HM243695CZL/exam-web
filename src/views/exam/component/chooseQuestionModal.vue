@@ -29,7 +29,7 @@ const state = reactive({
 	title: '选择试题',
 	isShowDialog: false,
 	pageInfo: new PageEntity(),
-	type: null,
+	type: null as number,
 	questionList: []
 });
 
@@ -37,7 +37,7 @@ const closeDialog = () => {
 	state.isShowDialog = false;
 };
 const openDialog = data => {
-	state.type = data.type;
+	state.type = ~~data.type;
 	state.isShowDialog = true;
 };
 const clickConfirm = () => {

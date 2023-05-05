@@ -26,15 +26,15 @@
 						</el-col>
 					</el-row>
 					<div class='question-type'>
-						<div class='type-item' v-for='item in state.ruleForm.questionBigType' :key='item.key'>
+						<div class='type-item' v-for='(item, index) in state.ruleForm.questionBigType' :key='item.key'>
 							<div class='big-name'>
 								<el-input class='input-name' v-model='item.name'></el-input>
 								<el-button @click='clickChooseQuestion(item)'>选择试题</el-button>
 							</div>
 							<div class='question-list'>
-								<div class='list-item' v-for='ele in item.questionList' :key='ele.id'>
+								<div class='list-item' v-for='(ele, i) in item.questionList' :key='index + "-" + i'>
 									<div class='question-content'>
-										<div class='q-name' v-html='ele.question'></div>
+										<div class='q-name' v-html='(i + 1) + ". " + ele.question'></div>
 										<ul>
 											<li :class='ele.answer === state.itemIndex[index] ? "active" : ""' v-for='(e, index) in ele.questionItemList' :key='e.id'>
 												<span class='a-item'>{{state.itemIndex[index]}}</span>{{e.name}}
@@ -49,11 +49,11 @@
 										</div>
 									</div>
 									<div class='question-operate'>
-										<el-button icon='ele-ArrowUp'>上移</el-button>
-										<el-button icon='ele-ArrowDown'>下移</el-button>
-										<el-button type='danger' icon='ele-Remove'>删除</el-button>
+										<el-button icon='ele-ArrowUp' @click='clickMoveUpQuestion(ele, index, i)'>上移</el-button>
+										<el-button icon='ele-ArrowDown' @click='clickMoveDownQuestion(ele, index, i)'>下移</el-button>
+										<el-button type='danger' icon='ele-Remove' @click='deleteQuestion(index, i)'>删除</el-button>
 										<div class='score'>
-											<el-input-number :min='1' v-model='ele.score'></el-input-number>分
+											<el-input-number :min='1' v-model='ele.score' @change='renderScoreInfo'></el-input-number>分
 										</div>
 									</div>
 								</div>
@@ -77,7 +77,7 @@
 			</div>
 			<div class='overview'>
 				<div class='overview-list'>
-					<div class='list-item' v-for='item in state.ruleForm.questionBigType' :key='item.id'>
+					<div class='list-item' v-for='(item, index) in state.ruleForm.questionBigType' :key='item.id'>
 						<div class='name'>{{item.name}}</div>
 						<div class='question-score'>
 							共 <span class='score'>{{item.questionList.length}}</span> 题，
@@ -87,13 +87,13 @@
 							每题<el-input-number v-model='item.preScore' @change='changeScore(item)'></el-input-number>分
 						</div>
 						<div class='button-box'>
-							<div class='icon-btn'>
+							<div class='icon-btn' @click='clickBigDelete(index)'>
 								<SvgIcon name='ele-Delete' />
 							</div>
-							<div class='icon-btn'>
+							<div class='icon-btn' @click='clickBigMoveUp(index)'>
 								<SvgIcon name='ele-ArrowUp' />
 							</div>
-							<div class='icon-btn'>
+							<div class='icon-btn' @click='clickBigMoveDown(index)'>
 								<SvgIcon name='ele-ArrowDown' />
 							</div>
 						</div>
@@ -117,7 +117,7 @@
 </template>
 
 <script lang='ts' setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import ChooseQuestionModal from './chooseQuestionModal.vue';
 import { ElMessage } from 'element-plus';
 import { getAction, postAction } from '/@/api/common';
@@ -202,6 +202,7 @@ const clickConfirmChoose = data => {
 			});
 		}
 	});
+	renderScoreInfo();
 };
 const changeScore = data => {
 	state.ruleForm.questionBigType.map(item => {
@@ -227,6 +228,38 @@ const renderScoreInfo = () => {
 	});
 	state.totalScore = totalScore;
 	state.totalQuestion = totalQuestion;
+};
+const deleteQuestion = (index, i) => {
+	state.ruleForm.questionBigType[index].questionList.splice(i, 1);
+	renderScoreInfo();
+};
+const clickMoveUpQuestion = (data, index, i) => {
+	if (i === 0) return false;
+	state.ruleForm.questionBigType[index].questionList.splice(i - 1, 2,
+		state.ruleForm.questionBigType[index].questionList[i], state.ruleForm.questionBigType[index].questionList[i - 1]);
+	renderScoreInfo();
+};
+const clickMoveDownQuestion = (data, index, i) => {
+	if (i === state.ruleForm.questionBigType[index].questionList.length - 1) return false;
+	state.ruleForm.questionBigType[index].questionList.splice(i, 2,
+		state.ruleForm.questionBigType[index].questionList[i + 1], state.ruleForm.questionBigType[index].questionList[i]);
+	renderScoreInfo();
+};
+const clickBigDelete = index => {
+	state.ruleForm.questionBigType.splice(index, 1);
+	renderScoreInfo();
+};
+const clickBigMoveUp = index => {
+	if (index === 0) return false;
+	state.ruleForm.questionBigType.splice(index - 1, 2,
+		state.ruleForm.questionBigType[index], state.ruleForm.questionBigType[index - 1]);
+	renderScoreInfo();
+};
+const clickBigMoveDown = index => {
+	if (index === state.ruleForm.questionBigType.length - 1) return false;
+	state.ruleForm.questionBigType.splice(index, 2,
+		state.ruleForm.questionBigType[index + 1], state.ruleForm.questionBigType[index]);
+	renderScoreInfo();
 };
 const clickConfirm = () => {
 	const dataMap = {
@@ -269,9 +302,6 @@ const clickConfirm = () => {
 		}
 	})
 };
-watch(state.ruleForm.questionBigType, () => {
-	renderScoreInfo();
-});
 onMounted(() => {
 	state.paperId = props.id as string;
 	if (props.id) {
@@ -373,7 +403,7 @@ onMounted(() => {
 					}
 				}
 				.big-question{
-					margin-top: 10px;
+					margin-top: 30px;
 					margin-bottom: 30px;
 					padding: 15px;
 					border: 1px dashed #ccc;
@@ -417,6 +447,7 @@ onMounted(() => {
 					.list-item{
 						border: 1px solid #ccc;
 						border-radius: 5px;
+						margin-bottom: 15px;
 						.name{
 							padding: 10px;
 							font-weight: 700;
