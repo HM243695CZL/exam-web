@@ -28,6 +28,7 @@
 				<vxe-column title="添加时间" field='addTime'/>
 				<vxe-column title="操作" width="200">
 					<template #default="scope">
+						<el-button size='small' type='default' @click="clickPreview(scope.row.id)">预览</el-button>
 						<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
 						<el-button size='small' type='danger' @click="clickDelete(scope.row.id)">删除</el-button>
 					</template>
@@ -54,6 +55,7 @@ import useCrud from '/@/hooks/useCrud';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
 import PaperModal from './component/paperModal.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
 	name: 'paper',
@@ -63,6 +65,7 @@ export default defineComponent({
 		PaperModal
 	},
 	setup() {
+		const router = useRouter();
 		const paperRef = ref();
 		const state = reactive({
 			uris: {
@@ -99,6 +102,11 @@ export default defineComponent({
 			state.currentId = id;
 			state.pageStatus = 'info';
 		};
+		const clickPreview = id => {
+			const { origin, pathname } = window.location;
+			window.open(`${origin}${pathname}#/previewPaper?id=${id}`);
+			// router.push('/previewPaper?id=' + id);
+		};
 		const clickCancel = (isRefresh: boolean) => {
 			state.pageStatus = 'main';
 			if (isRefresh) {
@@ -112,6 +120,7 @@ export default defineComponent({
 			clickAdd,
 			clickEdit,
 			clickCancel,
+			clickPreview,
 
 			tableRef,
 			modalFormRef,

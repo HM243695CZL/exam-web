@@ -106,4 +106,12 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 			title: '登录',
 		},
 	},
+	{
+		path: '/previewPaper',
+		name: 'previewPaper',
+		component: () => import('/@/views/exam/previewPaper.vue'),
+		meta: {
+			title: '预览试卷'
+		}
+	}
 ];
