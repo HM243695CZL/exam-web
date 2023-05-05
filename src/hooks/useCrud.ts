@@ -187,7 +187,7 @@ export default function({
 	});
 	onMounted(() => {
 		// 清空选中行
-		tableRef.value.clearCheckboxRow();
+		tableRef.value?.clearCheckboxRow();
 		if (isMountedLoad) {
 			getDataList();
 		}

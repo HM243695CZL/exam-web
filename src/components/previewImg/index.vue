@@ -38,6 +38,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang='scss'>
+	.img50{
+		width: 50px;
+		height: 50px;
+	}
 	.modal-img{
 		display: block;
 		width: 100%;
