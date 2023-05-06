@@ -37,7 +37,8 @@
 										<div class='q-name' v-html='(i + 1) + ". " + ele.question'></div>
 										<ul>
 											<li :class='ele.answer === state.itemIndex[index] ? "active" : ""' v-for='(e, index) in ele.questionItemList' :key='e.id'>
-												<span class='a-item'>{{state.itemIndex[index]}}</span>{{e.name}}
+												<span class='a-item'>{{state.itemIndex[index]}}</span>
+												<span class='question-name' v-html='e.name'></span>
 											</li>
 										</ul>
 										<div class='answer'>
@@ -377,6 +378,13 @@ onMounted(() => {
 												border: 1px solid #ccc;
 												border-radius: 50%;
 												margin: 5px 5px;
+											}
+											.question-name{
+												::v-deep {
+													p{
+														display: inline-block;
+													}
+												}
 											}
 										}
 									}

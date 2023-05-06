@@ -9,12 +9,13 @@
 				<div class='question-list'>
 					<div class='question-list-row' v-for='(ele, index) in item.questionList' :key='ele.id'>
 						<div class='question-name'>
-							<div class='question-name-text' v-html='index + 1 + ". " + ele.question'></div>
+							<div class='index-number'>{{index + 1}}. </div>
+							<div class='question-name-text' v-html='ele.question'></div>
 							<div class='score'>({{ele.score}}分)</div>
 						</div>
 						<div class='question-item-list'>
-							<div class='question-item' v-for='(e, i) in ele.questionItemList'>
-								{{itemIndex[i]}}. {{e.name}}
+							<div class='question-item' v-for='(e, i) in ele.questionItemList' :key='e.id'>
+								{{itemIndex[i]}}.<span v-html='e.name'></span>
 							</div>
 						</div>
 					</div>
@@ -94,11 +95,19 @@ export default defineComponent({
 							margin-left: 40px;
 							color: #126ac6;
 							padding: 10px 0;
-							::v-deep p{
-								display: inline-block;
-								color: #000;
+							.index-number{
+								width: 20px;
+							}
+							.question-name-text{
+								flex: 1;
+								padding-right: 20px;
+								::v-deep p{
+									display: inline-block;
+									color: #000;
+								}
 							}
 							.score{
+								width: 80px;
 								color: #000;
 								padding-right: 40px;
 							}
@@ -107,6 +116,15 @@ export default defineComponent({
 							margin-left: 60px;
 							.question-item{
 								padding: 10px 0;
+								::v-deep {
+									img{
+										width: 100px;
+										height: 100px;
+									}
+									p{
+										display: inline-block;
+									}
+								}
 							}
 						}
 					}

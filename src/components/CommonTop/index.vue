@@ -8,6 +8,12 @@
 					</el-icon>
 					新增
 				</el-button>
+				<el-button size='default' type='danger' @click='clickBatchDelete' v-if='props.buttonAuth.includes("batchDeleteBtn")'>
+					<el-icon>
+						<ele-Delete />
+					</el-icon>
+					批量删除
+				</el-button>
 				<slot name='left'></slot>
 			</div>
 			<div class='search-top-title-right'>
@@ -40,7 +46,7 @@
 	});
 
 	const emits = defineEmits([
-		'clickAdd', 'clickSearch', 'clickReset'
+		'clickAdd', 'clickSearch', 'clickReset', 'clickBatchDelete'
 	]);
 
 	const clickSearch = () => {
@@ -51,7 +57,10 @@
 	};
 	const clickAdd = () => {
 		emits('clickAdd');
-	}
+	};
+	const clickBatchDelete = () => {
+		emits('clickBatchDelete');
+	};
 </script>
 
 <style scoped lang='scss'>

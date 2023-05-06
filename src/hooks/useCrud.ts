@@ -12,14 +12,12 @@ interface ICrudParams {
 		delete?: string, // 单个删除接口
 	},
 	parentRef?: any, // 父级ref
-	otherSearchParams?: any, // 查询参数
 	isMountedLoad?: boolean, // 是否加载完成请求数据
 }
 
 export default function({
 													uris,
 													parentRef,
-													otherSearchParams,
 													isMountedLoad = true
 												}: ICrudParams) {
 	const tableRef = ref();
@@ -28,9 +26,7 @@ export default function({
 	const state = reactive({
 		pageInfo: new PageEntity(),
 		dataList: [],
-		searchParams: {
-			...otherSearchParams
-		} as any,
+		searchParams: {} as any,
 		selectedRowKeys: [] as any, // 被选中的数据主键
 		selectionRows: [], // 被选中的数据行
 		tableHeight: 300
@@ -38,7 +34,7 @@ export default function({
 	/**
 	 * 加载表格数据
 	 */
-	const getDataList = () => {
+	const getDataList = (otherSearchParams?) => {
 		if(!uris.page) {
 			ElMessage.error('请设置uris.page属性！');
 			return false;
@@ -50,7 +46,8 @@ export default function({
 		const reqMethod = uris.pageMethod ? uris.pageMethod : 'post';
 		actionMap[reqMethod](uris.page, {
 			...state.pageInfo,
-			...state.searchParams
+			...state.searchParams,
+			...otherSearchParams
 		}).then(res => {
 			if (res.status === StatusEnum.SUCCESS) {
 				if (parentRef) {

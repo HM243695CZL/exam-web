@@ -42,7 +42,8 @@
 						<el-radio  :label="state.ruleForm.type === 3 ? state.determineList[index] : state.itemIndex[index]" size="large"></el-radio>
 					</el-radio-group>
 					<div class='name'>
-						<el-input v-model='item.name' placeholder='请输入选项' clearable></el-input>
+						<Editor :ref='"questionItemNameRef" + index' :content='item.name' :height='100' @editorBlur='changeQuestionItemName($event, index)' />
+<!--						<el-input v-model='item.name' placeholder='请输入选项' clearable></el-input>-->
 					</div>
 					<div class='remove-item' @click='clickRemoveItem(index)'>
 						<SvgIcon name='ele-Remove'></SvgIcon>
@@ -92,10 +93,31 @@ const state = reactive({
 		score: 5,
 		answer: '' as any,
 		analysis: '',
-		type: null as any,
-		questionType: '',
-		difficulty: null,
-		questionItemList: [] as any
+		type: 1,
+		questionType: '317e751103f654a1631725d6e00355bd',
+		difficulty: 1,
+		questionItemList: [
+			{
+				key: new Date().getTime(),
+				name: '',
+				check: false
+			},
+			{
+				key: new Date().getTime() + 1,
+				name: '',
+				check: false
+			},
+			{
+				key: new Date().getTime() + 2,
+				name: '',
+				check: false
+			},
+			{
+				key: new Date().getTime() + 3,
+				name: '',
+				check: false
+			}
+		] as any
 	},
 	rules: {
 		question: [
@@ -170,6 +192,9 @@ const changeType = value => {
 		state.ruleForm.questionItemList = state.ruleForm.questionItemList.slice(0, 2);
 	}
 };
+const changeQuestionItemName = (value: string, index) => {
+	state.ruleForm.questionItemList[index].name = value;
+}
 const clickAddItem = () => {
 	state.ruleForm.questionItemList.push({
 		key: new Date().getTime(),

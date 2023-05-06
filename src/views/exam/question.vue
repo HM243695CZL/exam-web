@@ -18,6 +18,7 @@
 					@clickSearch="clickSearch"
 					@clickReset="clickReset"
 					@clickAdd="clickAdd"
+					@clickBatchDelete='clickBatchDelete'
 				>
 					<template #left>
 						<el-form-item label="题目">
@@ -39,7 +40,7 @@
 				>
 					<vxe-column type='checkbox' width='60' />
 					<vxe-column type="seq" title="序号" width="60" />
-					<vxe-column type='html' title="题目" field="question" />
+					<vxe-column type='html' title="题目" field="question" width='250' />
 					<vxe-column title="题型" field="type">
 						<template #default="scope">
 							{{typeMap[scope.row.type]}}
@@ -85,9 +86,11 @@ import TypeTree from '/@/components/TypeTree/index.vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
 import QuestionModal from './component/questionModal.vue';
-import { createQuestionApi, deleteQuestionApi,
+import {
+	createQuestionApi, deleteBatchQuestionApi, deleteQuestionApi,
 	getQuestionPageApi, updateQuestionApi,
-	viewQuestionApi } from '/@/api/exam/question';
+	viewQuestionApi,
+} from '/@/api/exam/question';
 import useCrud from '/@/hooks/useCrud';
 
 export default defineComponent({
@@ -113,16 +116,18 @@ export default defineComponent({
 			configTreeObj: {
 				title: '试题分类',
 				createPath: createQuestionTypeApi,
-				updatePath: deletePQuestionTypApi,
+				updatePath: updateQuestionTypApi,
 				getListPath: getQuestionTypListApi,
-				deletePath: updateQuestionTypApi
+				deletePath: deletePQuestionTypApi
 			},
 			uris: {
 				page: getQuestionPageApi,
-				delete: deleteQuestionApi
+				delete: deleteQuestionApi,
+				deleteBatch: deleteBatchQuestionApi
 			},
 			searchParams: {
-				type: props.type
+				type: props.type,
+				questionType: ''
 			},
 			configObj: {
 				title: '试题',
@@ -144,8 +149,27 @@ export default defineComponent({
 			},
 			pageStatus: 'main',
 			dataId: '',
-			buttonAuth: ['addBtn', 'searchBtn', 'resetBtn']
+			buttonAuth: ['addBtn', 'searchBtn', 'resetBtn', 'batchDeleteBtn'],
 		});
+		const clickNode = data => {
+			state.questionTypeList = data.dataList;
+			state.searchParams.questionType = data.node.id;
+			getDataList(state.searchParams);
+		};
+		const clickAdd = () => {
+			state.dataId = '';
+			state.pageStatus = 'info';
+		};
+		const clickEdit = (dataId: string) => {
+			state.dataId = dataId;
+			state.pageStatus = 'info';
+		};
+		const clickCancel = (refresh: boolean) => {
+			state.pageStatus = 'main';
+			if (refresh) {
+				getDataList(state.searchParams);
+			}
+		}
 		const {
 			tableRef,
 			modalFormRef,
@@ -159,6 +183,7 @@ export default defineComponent({
 			clickSearch,
 			clickReset,
 			clickDelete,
+			clickBatchDelete,
 			changePageIndex,
 			changePageSize,
 			filterChange,
@@ -166,31 +191,13 @@ export default defineComponent({
 		} = useCrud({
 			uris: state.uris,
 			parentRef: questionRef,
-			otherSearchParams: state.searchParams,
 			isMountedLoad: false
 		});
-		const clickNode = data => {
-			state.questionTypeList = data.dataList;
-		};
-		const clickAdd = () => {
-			state.dataId = '';
-			state.pageStatus = 'info';
-		};
-		const clickEdit = (dataId: string) => {
-			state.dataId = dataId;
-			state.pageStatus = 'info';
-		};
-		const clickCancel = (refresh: boolean) => {
-			state.pageStatus = 'main';
-			if (refresh) {
-				getDataList();
-			}
-		}
 		onMounted(() => {
 			if (props.type) {
 				state.buttonAuth = ['searchBtn', 'resetBtn'];
 			}
-			getDataList();
+			getDataList(state.searchParams);
 		});
 		return {
 			questionRef,
@@ -212,6 +219,7 @@ export default defineComponent({
 			clickSearch,
 			clickReset,
 			clickDelete,
+			clickBatchDelete,
 			changePageIndex,
 			changePageSize,
 			filterChange,
