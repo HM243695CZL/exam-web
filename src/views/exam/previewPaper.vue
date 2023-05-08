@@ -30,6 +30,7 @@ import { defineComponent, onMounted, reactive, toRefs } from 'vue';
 import { getAction } from '/@/api/common';
 import { previewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
+import other from '/@/utils/other';
 
 export default defineComponent({
 	name: 'previewPaper',
@@ -52,7 +53,8 @@ export default defineComponent({
 			})
 		}
 		onMounted(() => {
-			state.id = window.location.href.split('=')[1];
+			const urlMap = other.params2Obj(window.location.href) as any;
+			state.id = urlMap.id;
 			getPaperInfo();
 		})
 		return {
@@ -78,7 +80,7 @@ export default defineComponent({
 			background: #f5f5f5;
 			padding: 15px;
 			.big-list{
-				width: 80%;
+				width: 70%;
 				margin: -1px auto;
 				border: 1px solid #ccc;
 				.big-question-name{

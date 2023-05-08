@@ -186,6 +186,27 @@ export function getParams(params) {
 }
 
 /**
+ * 将地址栏的参数转为对象
+ */
+export function params2Obj(url) {
+	const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
+	if (!search) {
+		return {}
+	}
+	const obj = {}
+	const searchArr = search.split('&')
+	searchArr.forEach(v => {
+		const index = v.indexOf('=')
+		if (index !== -1) {
+			const name = v.substring(0, index)
+			const val = v.substring(index + 1, v.length)
+			obj[name] = val
+		}
+	})
+	return obj
+}
+
+/**
  * 格式化表单字段
  * @param formMap 表单对象
  * @param resMap 返回的对象
@@ -239,6 +260,9 @@ const other = {
 	},
 	getParams: (val) => {
 		return getParams(val);
+	},
+	params2Obj: (url) => {
+		return params2Obj(url)
 	},
 	formatFormMap: (formMap, resMap) => {
 		return formatFormMap(formMap, resMap);

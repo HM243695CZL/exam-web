@@ -26,9 +26,10 @@
 				<vxe-column title="试题信息" field='questionInfo'/>
 				<vxe-column title="总分" field='score'/>
 				<vxe-column title="添加时间" field='addTime'/>
-				<vxe-column title="操作" width="200">
+				<vxe-column title="操作" width="270">
 					<template #default="scope">
-						<el-button size='small' type='default' @click="clickPreview(scope.row.id)">预览</el-button>
+						<el-button size='small' type='default' @click="clickPreview(scope.row.id, 1)">预览</el-button>
+						<el-button size='small' type='default' @click="clickPreview(scope.row.id, 2)">去考试</el-button>
 						<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
 						<el-button size='small' type='danger' @click="clickDelete(scope.row.id)">删除</el-button>
 					</template>
@@ -102,10 +103,13 @@ export default defineComponent({
 			state.currentId = id;
 			state.pageStatus = 'info';
 		};
-		const clickPreview = id => {
+		/**
+		 *
+		 * @param type  1 预览   2 考试
+		 */
+		const clickPreview = (id, type) => {
 			const { origin, pathname } = window.location;
-			window.open(`${origin}${pathname}#/previewPaper?id=${id}`);
-			// router.push('/previewPaper?id=' + id);
+			window.open(`${origin}${pathname}#/previewPaper?id=${id}&type=${type}`);
 		};
 		const clickCancel = (isRefresh: boolean) => {
 			state.pageStatus = 'main';
