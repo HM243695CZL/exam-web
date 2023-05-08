@@ -85,7 +85,7 @@ import {
 import TypeTree from '/@/components/TypeTree/index.vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
-import QuestionModal from './component/questionModal.vue';
+import QuestionModal from './component/question/questionModal.vue';
 import {
 	createQuestionApi, deleteBatchQuestionApi, deleteQuestionApi,
 	getQuestionPageApi, updateQuestionApi,

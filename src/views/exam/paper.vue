@@ -26,10 +26,10 @@
 				<vxe-column title="试题信息" field='questionInfo'/>
 				<vxe-column title="总分" field='score'/>
 				<vxe-column title="添加时间" field='addTime'/>
-				<vxe-column title="操作" width="270">
+				<vxe-column title="操作" width="280">
 					<template #default="scope">
-						<el-button size='small' type='default' @click="clickPreview(scope.row.id, 1)">预览</el-button>
-						<el-button size='small' type='default' @click="clickPreview(scope.row.id, 2)">去考试</el-button>
+						<el-button size='small' type='default' @click="clickPreview(scope.row.id)">预览</el-button>
+						<el-button size='small' type='default' @click="clickPublish(scope.row.id)">发布考试</el-button>
 						<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
 						<el-button size='small' type='danger' @click="clickDelete(scope.row.id)">删除</el-button>
 					</template>
@@ -46,35 +46,44 @@
 			@clickCancel='clickCancel'
 			:id='currentId'
 		/>
+		<PublishExamModal
+			:class-list='classList'
+			ref='publishExamModalRef'
+		/>
 	</div>
 </template>
 
 <script lang='ts'>
-import { defineComponent, reactive, ref, toRefs } from 'vue';
+import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue';
 import { deletePaperApi, getPaperPageApi } from '/@/api/exam/paper';
 import useCrud from '/@/hooks/useCrud';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
-import PaperModal from './component/paperModal.vue';
-import { useRouter } from 'vue-router';
+import PaperModal from './component/paper/paperModal.vue';
+import PublishExamModal from './component/paper/publishExamModal.vue';
+import { postAction } from '/@/api/common';
+import { getClassListApi } from '/@/api/system/class-mng';
+import { StatusEnum } from '/@/common/status.enum';
 
 export default defineComponent({
 	name: 'paper',
 	components: {
 		CommonTop,
 		PaginationCommon,
-		PaperModal
+		PaperModal,
+		PublishExamModal
 	},
 	setup() {
-		const router = useRouter();
 		const paperRef = ref();
+		const publishExamModalRef = ref();
 		const state = reactive({
 			uris: {
 				page: getPaperPageApi,
 				delete: deletePaperApi
 			},
 			pageStatus: 'main',
-			currentId: ''
+			currentId: '',
+			classList: []
 		});
 		const {
 			tableRef,
@@ -103,13 +112,12 @@ export default defineComponent({
 			state.currentId = id;
 			state.pageStatus = 'info';
 		};
-		/**
-		 *
-		 * @param type  1 预览   2 考试
-		 */
-		const clickPreview = (id, type) => {
+		const clickPreview = id => {
 			const { origin, pathname } = window.location;
-			window.open(`${origin}${pathname}#/previewPaper?id=${id}&type=${type}`);
+			window.open(`${origin}${pathname}#/previewPaper?id=${id}`);
+		};
+		const clickPublish = id => {
+			publishExamModalRef.value.openDialog(id);
 		};
 		const clickCancel = (isRefresh: boolean) => {
 			state.pageStatus = 'main';
@@ -117,14 +125,25 @@ export default defineComponent({
 				getDataList();
 			}
 		};
-
+		const getClassList = () => {
+			postAction(getClassListApi, {}).then(res => {
+				if (res.status === StatusEnum.SUCCESS) {
+					state.classList = res.data;
+				}
+			})
+		};
+		onMounted(() => {
+			getClassList();
+		});
 		return {
 			paperRef,
+			publishExamModalRef,
 			...toRefs(state),
 			clickAdd,
 			clickEdit,
 			clickCancel,
 			clickPreview,
+			clickPublish,
 
 			tableRef,
 			modalFormRef,
