@@ -1,6 +1,6 @@
 <template>
 	<div class='preview-img-container'>
-		<img :src='imgUrl' alt='' class='img50' @click='showImg'>
+		<img :src='imgUrl' alt='' class='img60' @click='showImg'>
 		<el-dialog title='预览' append-to-body v-model='dialogVisible' width='800px'>
 			<img class='modal-img' :src='imgUrl' alt=''>
 			<template #footer>
@@ -38,9 +38,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang='scss'>
-	.img50{
-		width: 50px;
-		height: 50px;
+	.img60{
+		padding: 10px;
+		width: 60px;
+		height: 60px;
 	}
 	.modal-img{
 		display: block;

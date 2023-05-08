@@ -326,3 +326,6 @@ body,
 		padding-left: #{$i}px !important;
 	}
 }
+.el-loading-mask{
+	z-index: 9999 !important;
+}
