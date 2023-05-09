@@ -113,5 +113,13 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 		meta: {
 			title: '考试'
 		}
+	},
+	{
+		path: '/examining',
+		name: 'examining',
+		component: () => import('/@/views/myExam/examining.vue'),
+		meta: {
+			title: '正在考试'
+		}
 	}
 ];

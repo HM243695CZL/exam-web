@@ -36,6 +36,12 @@
 					<vxe-column title="学院名称" field="collegeName" />
 					<vxe-column title="专业名称" field="majorName" />
 					<vxe-column title="班级名称" field="name" />
+					<vxe-column title="操作" width="200">
+						<template #default="scope">
+							<el-button size='small' type='default' @click="clickEdit(scope.row.id)">修改</el-button>
+							<el-button size='small' type='danger' @click="clickDelete(scope.row.id)">删除</el-button>
+						</template>
+					</vxe-column>
 				</vxe-table>
 				<PaginationCommon
 					:page-info='pageInfo'
@@ -123,7 +129,7 @@ export default defineComponent({
 			}
 			state.currentNode = data.node.id;
 			state.collegeList = data.dataList;
-			getDataList();
+			getDataList(state.params);
 		};
 		const {
 			tableRef,
@@ -145,7 +151,6 @@ export default defineComponent({
 			uris: state.uris,
 			parentRef: classRef,
 			isMountedLoad: false,
-			otherParams: state.params
 		});
 		return {
 			classRef,

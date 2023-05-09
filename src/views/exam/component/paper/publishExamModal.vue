@@ -7,7 +7,7 @@
 							 v-model='state.isShowDialog' :width='800'>
 			<el-form ref='formRef' :rules='state.rules' :model='state.ruleForm' label-width='100px'>
 				<el-form-item label="考试班级" prop="classId">
-					<el-select multiple class='w100' v-model='state.ruleForm.classId' placeholder='选择考试班级'>
+					<el-select multiple filterable class='w100' v-model='state.ruleForm.classId' placeholder='选择考试班级'>
 						<el-option v-for='item in props.classList' :key='item.id' :value='item.id' :label='item.name'></el-option>
 					</el-select>
 				</el-form-item>
