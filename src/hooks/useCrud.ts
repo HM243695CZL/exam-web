@@ -50,7 +50,7 @@ export default function({
 			...otherSearchParams
 		}).then(res => {
 			if (res.status === StatusEnum.SUCCESS) {
-				if (parentRef.value) {
+				if (parentRef) {
 					state.tableHeight = parentRef.value.getBoundingClientRect().height;
 				}
 				state.dataList = reqMethod === 'post' ? res.data.list : res.data;

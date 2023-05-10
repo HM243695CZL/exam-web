@@ -14,7 +14,7 @@
 						</div>
 						<div class='list-item-box'>
 							<div class='list-item' v-for='(item, index) in currentQuestionInfo.questionItemList' :key='item.id'>
-								<el-radio-group v-model='chooseAnswer'>
+								<el-radio-group v-model='chooseAnswer' @change='changeAnswer'>
 									<el-radio  :label="itemIndex[index] + '. '" size="large"></el-radio>
 								</el-radio-group>
 								<span class='item' v-html='item.name'></span>
@@ -45,11 +45,23 @@
 						<div class='big-title' v-for='(item, index) in paperInfo.questionBigList' :key='item.bigId'>
 							<div class='big-name'>{{item.bigName}}(共{{item.questionList.length}}题，合计{{item.questionScore}}分)</div>
 							<div class='big-item'>
-								<div :class='["question-circle", (index === currentBigIndex && i === currentQuestionIndex) ? "active" : ""]'
+								<div :class='["question-circle", (index === currentBigIndex && i === currentQuestionIndex) ? "active" : "",answerMap.hasOwnProperty(ele.id) ? "done" : ""]'
 										 @click='clickAnswerCardIndex(index, i)'
-										 v-for='(ele, i) in item.questionList.length' :key='ele'>{{i + 1}}</div>
+										 v-for='(ele, i) in item.questionList' :key='ele.id'>{{i + 1}}</div>
 							</div>
 						</div>
+					</div>
+					<div class='submit-paper'>
+						<el-popconfirm
+							:width='tipWidth'
+							:title='tipTitle'
+							@confirm="clickConfirmSubmit"
+							@cancel="clickCancelSubmit"
+						>
+							<template #reference>
+								<div class='submit-btn' @click='clickSubmitPaper'>交卷</div>
+							</template>
+						</el-popconfirm>
 					</div>
 				</div>
 			</div>
@@ -59,8 +71,8 @@
 
 <script lang='ts'>
 import { defineComponent, onMounted, reactive, toRefs } from 'vue';
-import { getAction } from '/@/api/common';
-import { previewPaperApi } from '/@/api/exam/paper';
+import { getAction, postAction } from '/@/api/common';
+import { previewPaperApi, submitPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
 import { ElMessage } from 'element-plus';
@@ -82,9 +94,11 @@ export default defineComponent({
 				questionItemList: []
 			} as any,
 			chooseAnswer: '',
-			answerList: [],
+			answerMap: {},
 			currentBigIndex: 0,
-			currentQuestionIndex: 0
+			currentQuestionIndex: 0,
+			tipTitle: '',
+			tipWidth: '260'
 		});
 		const getPaperInfo = () => {
 			getAction(previewPaperApi + '/' + state.id, '').then(res => {
@@ -132,12 +146,46 @@ export default defineComponent({
 					state.currentQuestionIndex += 1;
 				}
 			}
+			state.chooseAnswer = '';
+			if (state.answerMap[state.currentQuestionInfo.id]) {
+				state.chooseAnswer = state.answerMap[state.currentQuestionInfo.id]
+			}
 		};
 		const clickAnswerCardIndex = (index, i) => {
+			state.chooseAnswer = '';
 			state.currentBigIndex = index;
 			state.currentQuestionIndex = i;
 			state.currentBigInfo = state.paperInfo.questionBigList[index];
 			state.currentQuestionInfo = state.currentBigInfo.questionList[i];
+			if (state.answerMap[state.currentQuestionInfo.id]) {
+				state.chooseAnswer = state.answerMap[state.currentQuestionInfo.id]
+			}
+		};
+		const changeAnswer = () => {
+			state.answerMap[state.currentQuestionInfo.id] = state.chooseAnswer;
+		};
+		const clickSubmitPaper = () => {
+			if (Object.keys(state.answerMap).length !== ~~state.paperInfo.paper.questionCount) {
+				state.tipTitle = '试题还未答完，是否确定提交!';
+			} else {
+				state.tipTitle = '提交以后不能更改，是否确定提交!';
+			}
+		};
+		const clickCancelSubmit = () => {
+
+		};
+		const clickConfirmSubmit = () => {
+			for (const o in state.answerMap) {
+				state.answerMap[o] = state.answerMap[o].slice(0, 1)
+			}
+			postAction(submitPaperApi, {
+				paperId: state.id,
+				answerMap: state.answerMap
+			}).then(res => {
+				if (res.status === StatusEnum.SUCCESS) {
+					ElMessage.success(res.message);
+				}
+			})
 		};
 		onMounted(() => {
 			const urlMap = other.params2Obj(window.location.href) as any;
@@ -147,7 +195,11 @@ export default defineComponent({
 		return {
 			...toRefs(state),
 			changeQuestion,
-			clickAnswerCardIndex
+			clickAnswerCardIndex,
+			changeAnswer,
+			clickSubmitPaper,
+			clickCancelSubmit,
+			clickConfirmSubmit
 		}
 	}
 });
@@ -203,6 +255,7 @@ export default defineComponent({
 							}
 							.question-name{
 								color: #126ac6;
+								line-height: 25px;
 								::v-deep p{
 									display: inline-block;
 									color: #000;
@@ -241,6 +294,7 @@ export default defineComponent({
 					width: 350px;
 					background: #fff;
 					margin-left: 20px;
+					position: relative;
 					.head{
 						.count-down{
 							text-space: 2px;
@@ -296,8 +350,27 @@ export default defineComponent({
 										border-color: #126ac6;
 										color: #126ac6;
 									}
+									&.done{
+										background: #126ac6;
+										color: #fff;
+									}
 								}
 							}
+						}
+					}
+					.submit-paper{
+						position: absolute;
+						width: 100%;
+						bottom: 20px;
+						left: 0;
+						padding: 0 20px;
+						text-align: center;
+						.submit-btn{
+							cursor: pointer;
+							padding: 10px 30px;
+							background: #126ac6;
+							border-radius: 5px;
+							color: #fff;
 						}
 					}
 				}

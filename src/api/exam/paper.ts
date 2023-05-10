@@ -9,3 +9,4 @@ export const previewPaperApi = `${basePaperApi}preview`;
 export const publishPaperApi = `${basePaperApi}publish`;
 export const getPublishClassApi = `${basePaperApi}getPublishClass`;
 export const getMyExamPageApi = `${basePaperApi}getMyExam`;
+export const submitPaperApi = `${basePaperApi}submitPaper`;

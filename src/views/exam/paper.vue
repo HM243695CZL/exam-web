@@ -114,7 +114,7 @@ export default defineComponent({
 		};
 		const clickPreview = id => {
 			const { origin, pathname } = window.location;
-			window.open(`${origin}${pathname}#/previewPaper?id=${id}`);
+			window.open(`${origin}${pathname}#/previewPaper?paperId=${id}`);
 		};
 		const clickPublish = id => {
 			publishExamModalRef.value.openDialog(id);

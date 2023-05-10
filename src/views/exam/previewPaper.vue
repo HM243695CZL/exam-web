@@ -18,6 +18,34 @@
 								{{itemIndex[i]}}.<span v-html='e.name'></span>
 							</div>
 						</div>
+						<div class='view-answer' v-if='examId'>
+							<div class='your-answer'>
+								你的答案：<span>{{ele.currentUserAnswer}}</span>
+								<div class='result'>
+									<div class='yes' v-if='ele.answer === ele.currentUserAnswer'>
+										<img src='src/assets/img/all-right.png' alt=''>
+									</div>
+									<div class='no' v-else>
+										<img src='src/assets/img/fork.png' alt=''>
+									</div>
+								</div>
+							</div>
+							<div class='correct-answer'>
+								正确答案：<span>{{ele.answer}}</span>
+							</div>
+							<div class='analysis'>
+								解析：
+								<div class='analysis-html' v-html='ele.analysis'></div>
+							</div>
+						</div>
+						<div class='exam-result'>
+							<div class='paper-score'>
+								试卷总分：<span class='number'>{{paperInfo.paper.score}}</span>分
+							</div>
+							<div class='exam-score'>
+								考试得分：<span class='number'>{{examInfo.score}}</span>分
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -28,34 +56,50 @@
 <script lang='ts'>
 import { defineComponent, onMounted, reactive, toRefs } from 'vue';
 import { getAction } from '/@/api/common';
-import { previewPaperApi } from '/@/api/exam/paper';
+import { previewPaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
+import { viewRecordApi } from '/@/api/exam/record';
 
 export default defineComponent({
 	name: 'previewPaper',
 	setup() {
 		const state = reactive({
-			id: '',
+			paperId: '',
 			paperInfo: {
 				paper: {},
 				questionBigList: []
 			} as any,
 			itemIndex: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+			status: '0',
+			examId: '',
+			examInfo: {} as any
 		});
 		const getPaperInfo = () => {
-			getAction(previewPaperApi + '/' + state.id, '').then(res => {
+			getAction((state.status === '1' ? viewPaperApi : previewPaperApi) + '/' + state.paperId, '').then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
 					const { paper, questionBigList } = res.data;
 					state.paperInfo.paper = paper;
 					state.paperInfo.questionBigList = questionBigList;
 				}
 			})
+		};
+		const getRecordInfo = () => {
+			getAction(viewRecordApi + '/' + state.examId, '').then(res => {
+				if (res.status === StatusEnum.SUCCESS) {
+					state.examInfo = res.data;
+				}
+			});
 		}
 		onMounted(() => {
 			const urlMap = other.params2Obj(window.location.href) as any;
-			state.id = urlMap.id;
+			state.paperId = urlMap.paperId;
+			state.status = urlMap.status;
+			state.examId = urlMap.examId;
 			getPaperInfo();
+			if (state.examId) {
+				getRecordInfo();
+			}
 		})
 		return {
 			...toRefs(state)
@@ -99,10 +143,12 @@ export default defineComponent({
 							padding: 10px 0;
 							.index-number{
 								width: 20px;
+								margin-top: 3px;
 							}
 							.question-name-text{
 								flex: 1;
 								padding-right: 20px;
+								line-height: 25px;
 								::v-deep p{
 									display: inline-block;
 									color: #000;
@@ -129,7 +175,70 @@ export default defineComponent({
 								}
 							}
 						}
+						.your-answer{
+							padding: 10px 0;
+							margin-left: 50px;
+							display: flex;
+							align-items: center;
+							span{
+								color: #f40;
+							}
+							.result{
+								margin-left: 240px;
+								.yes{
+									font-size: 30px;
+									color: #3eaf7c;
+								}
+								.no{
+									font-size: 30px;
+									color: #dd4a68;
+								}
+								img{
+									width: 100px;
+									height: 100px;
+								}
+							}
+						}
+						.correct-answer{
+							padding: 10px 0;
+							margin-left: 50px;
+							span{
+								color: #126ac6;
+							}
+						}
+						.analysis{
+							padding: 10px 0;
+							margin-left: 50px;
+							color: #f40;
+							.analysis-html{
+								margin-left: 10px;
+								margin-top: 10px;
+							}
+						}
 					}
+				}
+			}
+		}
+		.exam-result{
+			position: fixed;
+			top: 85px;
+			right: 20px;
+			padding: 20px;
+			border: 1px solid #f1f1f1;
+			background: #fff;
+			.paper-score{
+				.number{
+					color: #126ac6;
+					font-size: 20px;
+					margin: 0 5px;
+				}
+			}
+			.exam-score{
+				margin-top: 10px;
+				.number{
+					color: #f40;
+					font-size: 20px;
+					margin: 0 5px;
 				}
 			}
 		}
