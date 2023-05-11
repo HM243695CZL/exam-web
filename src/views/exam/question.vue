@@ -127,7 +127,7 @@ export default defineComponent({
 			},
 			searchParams: {
 				type: props.type,
-				questionType: ''
+				questionType: '317e751103f654a1631725d6e00355bd'
 			},
 			configObj: {
 				title: '试题',
@@ -153,7 +153,8 @@ export default defineComponent({
 		});
 		const clickNode = data => {
 			state.questionTypeList = data.dataList;
-			state.searchParams.questionType = data.node.id;
+			// state.searchParams.questionType = data.node.id;
+			state.searchParams.questionType = '317e751103f654a1631725d6e00355bd';
 			getDataList(state.searchParams);
 		};
 		const clickSearch = () => {

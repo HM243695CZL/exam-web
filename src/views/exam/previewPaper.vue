@@ -23,10 +23,10 @@
 								你的答案：<span>{{itemIndex[ele.currentUserAnswerIndex]}}</span>
 								<div class='result'>
 									<div class='yes' v-if='ele.answer === ele.currentUserAnswer'>
-										<img src='src/assets/img/all-right.png' alt=''>
+										<img :src='allRightImg' alt=''>
 									</div>
 									<div class='no' v-else>
-										<img src='src/assets/img/fork.png' alt=''>
+										<img :src='forkImg' alt=''>
 									</div>
 								</div>
 							</div>
@@ -59,6 +59,8 @@ import { getAction } from '/@/api/common';
 import { previewPaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
+import allRightImg from '/@/assets/img/all-right.png';
+import forkImg from '/@/assets/img/fork.png'
 
 export default defineComponent({
 	name: 'previewPaper',
@@ -73,7 +75,9 @@ export default defineComponent({
 			itemIndex: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
 			status: '0',
 			isRecord: false,
-			examInfo: {} as any
+			examInfo: {} as any,
+			allRightImg,
+			forkImg
 		});
 		const getPaperInfo = () => {
 			getAction((state.isRecord ? viewPaperApi : previewPaperApi) + '/' + state.paperId, '').then(res => {
