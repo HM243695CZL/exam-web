@@ -14,8 +14,8 @@
 						</div>
 						<div class='list-item-box'>
 							<div class='list-item' v-for='(item, index) in currentQuestionInfo.questionItemList' :key='item.id'>
-								<el-radio-group v-model='chooseAnswer' @change='changeAnswer'>
-									<el-radio  :label="itemIndex[index] + '. '" size="large"></el-radio>
+								<el-radio-group v-model='chooseAnswer' @change='changeAnswer(item.id)'>
+									<el-radio  :label="item.id" size="large">{{itemIndex[index] + '. '}}</el-radio>
 								</el-radio-group>
 								<span class='item' v-html='item.name'></span>
 							</div>
@@ -28,7 +28,9 @@
 				</div>
 				<div class='answer-card h100'>
 					<div class='head'>
-						剩余时间：<span class='count-down'>00 : 30 : 00</span>
+						剩余时间：
+						<span class='count-down' v-if='paperInfo.paper.questionDuration'>00 : 30 : 00</span>
+						<span class='count-down' v-else >不限时</span>
 					</div>
 					<div class='answer-status'>
 						<div class='status-item'>
@@ -161,8 +163,8 @@ export default defineComponent({
 				state.chooseAnswer = state.answerMap[state.currentQuestionInfo.id]
 			}
 		};
-		const changeAnswer = () => {
-			state.answerMap[state.currentQuestionInfo.id] = state.chooseAnswer;
+		const changeAnswer = itemId => {
+			state.answerMap[state.currentQuestionInfo.id] = itemId;
 		};
 		const clickSubmitPaper = () => {
 			if (Object.keys(state.answerMap).length !== ~~state.paperInfo.paper.questionCount) {
@@ -175,9 +177,6 @@ export default defineComponent({
 
 		};
 		const clickConfirmSubmit = () => {
-			for (const o in state.answerMap) {
-				state.answerMap[o] = state.answerMap[o].slice(0, 1)
-			}
 			postAction(submitPaperApi, {
 				paperId: state.id,
 				answerMap: state.answerMap

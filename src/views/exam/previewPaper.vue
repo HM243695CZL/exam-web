@@ -18,9 +18,9 @@
 								{{itemIndex[i]}}.<span v-html='e.name'></span>
 							</div>
 						</div>
-						<div class='view-answer' v-if='examId'>
+						<div class='view-answer' v-if='isRecord'>
 							<div class='your-answer'>
-								你的答案：<span>{{ele.currentUserAnswer}}</span>
+								你的答案：<span>{{itemIndex[ele.currentUserAnswerIndex]}}</span>
 								<div class='result'>
 									<div class='yes' v-if='ele.answer === ele.currentUserAnswer'>
 										<img src='src/assets/img/all-right.png' alt=''>
@@ -31,19 +31,19 @@
 								</div>
 							</div>
 							<div class='correct-answer'>
-								正确答案：<span>{{ele.answer}}</span>
+								正确答案：<span>{{itemIndex[ele.answerIndex]}}</span>
 							</div>
 							<div class='analysis'>
 								解析：
 								<div class='analysis-html' v-html='ele.analysis'></div>
 							</div>
 						</div>
-						<div class='exam-result'>
+						<div class='exam-result' v-if='isRecord'>
 							<div class='paper-score'>
 								试卷总分：<span class='number'>{{paperInfo.paper.score}}</span>分
 							</div>
 							<div class='exam-score'>
-								考试得分：<span class='number'>{{examInfo.score}}</span>分
+								考试得分：<span class='number'>{{paperInfo.answerRecordInfo.score}}</span>分
 							</div>
 						</div>
 					</div>
@@ -59,7 +59,6 @@ import { getAction } from '/@/api/common';
 import { previewPaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
-import { viewRecordApi } from '/@/api/exam/record';
 
 export default defineComponent({
 	name: 'previewPaper',
@@ -68,38 +67,42 @@ export default defineComponent({
 			paperId: '',
 			paperInfo: {
 				paper: {},
-				questionBigList: []
+				questionBigList: [],
+				answerRecordInfo: {}
 			} as any,
 			itemIndex: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
 			status: '0',
-			examId: '',
+			isRecord: false,
 			examInfo: {} as any
 		});
 		const getPaperInfo = () => {
-			getAction((state.status === '1' ? viewPaperApi : previewPaperApi) + '/' + state.paperId, '').then(res => {
+			getAction((state.isRecord ? viewPaperApi : previewPaperApi) + '/' + state.paperId, '').then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
-					const { paper, questionBigList } = res.data;
+					const { paper, questionBigList, answerRecordInfo } = res.data;
 					state.paperInfo.paper = paper;
+					state.paperInfo.answerRecordInfo = answerRecordInfo;
 					state.paperInfo.questionBigList = questionBigList;
+					state.paperInfo.questionBigList.map(item => {
+						item.questionList.map(ele => {
+							ele.questionItemList.map((e, index) => {
+								if (ele.currentUserAnswer === e.id) {
+									ele.currentUserAnswerIndex = index;
+								}
+								if (ele.answer === e.id) {
+									ele.answerIndex = index;
+								}
+							})
+						})
+					})
 				}
 			})
 		};
-		const getRecordInfo = () => {
-			getAction(viewRecordApi + '/' + state.examId, '').then(res => {
-				if (res.status === StatusEnum.SUCCESS) {
-					state.examInfo = res.data;
-				}
-			});
-		}
 		onMounted(() => {
 			const urlMap = other.params2Obj(window.location.href) as any;
 			state.paperId = urlMap.paperId;
 			state.status = urlMap.status;
-			state.examId = urlMap.examId;
+			state.isRecord = urlMap.isRecord;
 			getPaperInfo();
-			if (state.examId) {
-				getRecordInfo();
-			}
 		})
 		return {
 			...toRefs(state)

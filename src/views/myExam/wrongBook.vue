@@ -1,5 +1,5 @@
 <template>
-	<div class='exam-list-container' ref='examListRef'>
+	<div class='wrong-book-container' ref='wrongBookRef'>
 		<CommonTop
 			@clickSearch="clickSearch"
 			@clickReset="clickReset"
@@ -7,7 +7,7 @@
 		>
 			<template #left>
 				<el-form-item label="题目">
-					<el-input v-model="searchParams.name" placeholder="请输入试卷名称" clearable></el-input>
+					<el-input v-model="searchParams.name" placeholder="请输入题目" clearable></el-input>
 				</el-form-item>
 			</template>
 		</CommonTop>
@@ -21,18 +21,8 @@
 			:max-height='tableHeight'
 		>
 			<vxe-column type="seq" title="序号" width="60" />
-			<vxe-column title="试卷名称" field='name'/>
-			<vxe-column title="试题信息" field='questionInfo'/>
-			<vxe-column title="总分" field='score'/>
-			<vxe-column title="考试得分" field='examScore'/>
-			<vxe-column title="发布时间" field='publishTime'/>
-			<vxe-column title="交卷时间" field='submitTime'/>
-			<vxe-column title="操作" width="140">
-				<template #default="scope">
-					<el-button v-if='!scope.row.examScore' size='small' type='default' @click="clickStartExam(scope.row.id)">开始考试</el-button>
-					<el-button v-else size='small' type='default' @click="clickViewPaper(scope.row.id)">查看试卷</el-button>
-				</template>
-			</vxe-column>
+			<vxe-column title="试题名称" field='questionName' type='html'/>
+			<vxe-column title="出错次数" field='wrongCount'/>
 		</vxe-table>
 		<PaginationCommon
 			:page-info='pageInfo'
@@ -44,22 +34,22 @@
 
 <script lang='ts'>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
+import { getWrongBookPageApi } from '/@/api/exam/wrongBook';
 import useCrud from '/@/hooks/useCrud';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
-import { getMyExamPageApi } from '/@/api/exam/paper';
 
 export default defineComponent({
-	name: 'examList',
+	name: 'wrongBook',
 	components: {
 		CommonTop,
 		PaginationCommon,
 	},
 	setup() {
-		const examListRef = ref();
+		const wrongBookRef = ref();
 		const state = reactive({
 			uris: {
-				page: getMyExamPageApi
+				page: getWrongBookPageApi
 			}
 		});
 		const {
@@ -75,21 +65,11 @@ export default defineComponent({
 			changePageSize
 		} = useCrud({
 			uris: state.uris,
-			parentRef: examListRef
+			parentRef: wrongBookRef
 		});
-		const clickStartExam = id => {
-			const { origin, pathname } = window.location;
-			window.open(`${origin}${pathname}#/examining?id=${id}`);
-		};
-		const clickViewPaper = id => {
-			const { origin, pathname } = window.location;
-			window.open(`${origin}${pathname}#/previewPaper?paperId=${id}&isRecord=true`);
-		};
 		return {
 			...toRefs(state),
-			examListRef,
-			clickStartExam,
-			clickViewPaper,
+			wrongBookRef,
 
 			tableRef,
 			pageInfo,
@@ -107,7 +87,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang='scss'>
-	.exam-list-container{
+	.wrong-book-container{
 		padding: 20px;
 	}
 </style>

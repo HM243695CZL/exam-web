@@ -156,6 +156,9 @@ export default defineComponent({
 			state.searchParams.questionType = data.node.id;
 			getDataList(state.searchParams);
 		};
+		const clickSearch = () => {
+			getDataList(state.searchParams);
+		};
 		const clickAdd = () => {
 			state.dataId = '';
 			state.pageStatus = 'info';
@@ -180,7 +183,6 @@ export default defineComponent({
 			searchParams,
 			selectionRows,
 			getDataList,
-			clickSearch,
 			clickReset,
 			clickDelete,
 			clickBatchDelete,
@@ -206,6 +208,7 @@ export default defineComponent({
 			clickCancel,
 			clickAdd,
 			clickEdit,
+			clickSearch,
 
 			tableRef,
 			modalFormRef,
@@ -216,7 +219,6 @@ export default defineComponent({
 			searchParams,
 			selectionRows,
 			getDataList,
-			clickSearch,
 			clickReset,
 			clickDelete,
 			clickBatchDelete,

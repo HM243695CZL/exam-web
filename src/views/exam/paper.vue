@@ -7,7 +7,7 @@
 				@clickAdd="clickAdd"
 			>
 				<template #left>
-					<el-form-item label="题目">
+					<el-form-item label="试卷名称">
 						<el-input v-model="searchParams.name" placeholder="请输入试卷名称" clearable></el-input>
 					</el-form-item>
 				</template>

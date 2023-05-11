@@ -94,7 +94,7 @@ const state = reactive({
 		answer: '' as any,
 		analysis: '',
 		type: 1,
-		questionType: '317e751103f654a1631725d6e00355bd',
+		questionType: '80bf0db118f64744d374bbd3904fb9cd',
 		difficulty: 1,
 		questionItemList: [
 			{
@@ -215,6 +215,11 @@ onMounted(() => {
 		getAction(viewQuestionApi + '/' + state.ruleForm.id, '').then(res => {
 			if (res.status === StatusEnum.SUCCESS) {
 				state.ruleForm = other.formatFormMap(state.ruleForm, res.data) as any;
+				res.data.questionItemList.map((item, index) => {
+					if (item.id === state.ruleForm.answer) {
+						state.ruleForm.answer = state.itemIndex[index];
+					}
+				})
 				questionEditorRef.value.editorRef.setHtml(state.ruleForm.question);
 				analysisEditorRef.value.editorRef.setHtml(state.ruleForm.analysis);
 				if (state.ruleForm.type === 2) {
