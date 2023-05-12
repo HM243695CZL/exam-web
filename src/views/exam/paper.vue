@@ -45,6 +45,7 @@
 			v-if='pageStatus === "info"'
 			@clickCancel='clickCancel'
 			:id='currentId'
+			:question-type-list='questionTypeList'
 		/>
 		<PublishExamModal
 			:class-list='classList'
@@ -61,9 +62,10 @@ import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
 import PaperModal from './component/paper/paperModal.vue';
 import PublishExamModal from './component/paper/publishExamModal.vue';
-import { postAction } from '/@/api/common';
+import { getAction, postAction } from '/@/api/common';
 import { getClassListApi } from '/@/api/system/class-mng';
 import { StatusEnum } from '/@/common/status.enum';
+import { getQuestionTypListApi } from '/@/api/exam/question-type';
 
 export default defineComponent({
 	name: 'paper',
@@ -83,7 +85,8 @@ export default defineComponent({
 			},
 			pageStatus: 'main',
 			currentId: '',
-			classList: []
+			classList: [],
+			questionTypeList: []
 		});
 		const {
 			tableRef,
@@ -132,8 +135,16 @@ export default defineComponent({
 				}
 			})
 		};
+		const getQuestionTypeList = () => {
+			getAction(getQuestionTypListApi, '').then(res => {
+				if (res.status === StatusEnum.SUCCESS) {
+					state.questionTypeList = res.data;
+				}
+			})
+		}
 		onMounted(() => {
 			getClassList();
+			getQuestionTypeList();
 		});
 		return {
 			paperRef,

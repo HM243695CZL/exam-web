@@ -30,6 +30,7 @@
 							<div class='big-name'>
 								<el-input class='input-name' v-model='item.name'></el-input>
 								<el-button @click='clickChooseQuestion(item)'>选择试题</el-button>
+								<el-button @click='clickRandom(item)'>随机抽题</el-button>
 							</div>
 							<div class='question-list'>
 								<div class='list-item' v-for='(ele, i) in item.questionList' :key='index + "-" + i'>
@@ -42,7 +43,7 @@
 											</li>
 										</ul>
 										<div class='answer'>
-											答案：{{ele.answer}}
+											答案：{{state.itemIndex[ele.answerIndex]}}
 										</div>
 										<div class='analysis'>
 											解析：
@@ -114,12 +115,18 @@
 			ref='chooseQuestionModalRef'
 			@clickConfirmChoose='clickConfirmChoose'
 		/>
+		<RandomChooseQuestionModal
+			:question-type-list='props.questionTypeList'
+			ref='randomChooseRef'
+			@clickConfirmChoose='clickConfirmChoose'
+		/>
 	</div>
 </template>
 
 <script lang='ts' setup>
 import { onMounted, reactive, ref } from 'vue';
 import ChooseQuestionModal from './chooseQuestionModal.vue';
+import RandomChooseQuestionModal from './randomChooseQuestionModal.vue';
 import { ElMessage } from 'element-plus';
 import { getAction, postAction } from '/@/api/common';
 import { createPaperApi, updatePaperApi, viewPaperApi } from '/@/api/exam/paper';
@@ -128,12 +135,17 @@ import { StatusEnum } from '/@/common/status.enum';
 const props = defineProps({
 	id: {
 		type: String
+	},
+	questionTypeList: {
+		type: Array,
+		required: true
 	}
 });
 const emits = defineEmits([
 	'clickCancel'
 ]);
 const chooseQuestionModalRef = ref();
+const randomChooseRef = ref();
 const state = reactive({
 	ruleForm: {
 		id: '',
@@ -148,7 +160,7 @@ const state = reactive({
 	totalQuestion: 0,
 	totalScore: 0,
 	upperIndex: ['一', '二', '三' , '四', '五', '六', '七' ,'八', '九', '十', '十一', '十二'],
-	paperId: ''
+	paperId: '',
 });
 const clickCancel = () => {
 	emits('clickCancel', false);
@@ -189,6 +201,21 @@ const clickChooseQuestion = data => {
 		type: data.type
 	});
 };
+const clickRandom = data => {
+	const typeArr = [];
+	state.ruleForm.questionBigType.map(item => {
+		item.questionList.map(ele => {
+			if (!typeArr.includes(ele.questionType)) {
+				typeArr.push(ele.questionType)
+			}
+		})
+	});
+	state.currentKey = data.key;
+	randomChooseRef.value.openDialog({
+		type: data.type,
+		selectedQuestionType: typeArr
+	});
+};
 const clickConfirmChoose = data => {
 	state.ruleForm.questionBigType.map(item => {
 		if (item.key === state.currentKey) {
@@ -198,6 +225,11 @@ const clickConfirmChoose = data => {
 			});
 			data.map(ele => {
 				if (!arr.includes(ele.id)) {
+					ele.questionItemList.map((e, index) => {
+						if (e.id === ele.answer) {
+							ele.answerIndex = index;
+						}
+					})
 					item.questionList.push(ele);
 				}
 			});
@@ -359,6 +391,7 @@ onMounted(() => {
 								align-items: flex-start;
 								.question-content{
 									flex: 1;
+									padding-right: 20px;
 									:deep p{
 										display: inline;
 									}
