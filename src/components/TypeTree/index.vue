@@ -59,6 +59,10 @@ const props = defineProps({
 	hasOperateAuth: {
 		type: Boolean,
 		default: true
+	},
+	defaultNode: {
+		type: String,
+		default: ''
 	}
 });
 
@@ -73,11 +77,15 @@ const getTreeList = () => {
 		if (res.status === StatusEnum.SUCCESS) {
 			state.dataList = res.data;
 			if (res.data.length) {
-				state.currentNode = res.data[0].id;
-				emits('clickNode', {
-					node: res.data[0],
-					dataList: state.dataList,
-				});
+				if (!props.defaultNode) {
+					state.currentNode = res.data[0].id;
+					emits('clickNode', {
+						node: res.data[0],
+						dataList: state.dataList,
+					});
+				} else {
+					state.currentNode = props.defaultNode;
+				}
 			}
 		}
 	});

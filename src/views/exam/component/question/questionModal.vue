@@ -94,7 +94,7 @@ const state = reactive({
 		answer: '' as any,
 		analysis: '',
 		type: 1,
-		questionType: '317e751103f654a1631725d6e00355bd',
+		questionType: '',
 		difficulty: 1,
 		questionItemList: [
 			{

@@ -10,6 +10,7 @@
 					:delete-path='configTreeObj.deletePath'
 					@clickNode='clickNode($event)'
 					:has-operate-auth='!$props.type'
+					:default-node='otherSearchParams.questionType'
 				/>
 			</div>
 			<div class='content-box h100'>
@@ -125,9 +126,9 @@ export default defineComponent({
 				delete: deleteQuestionApi,
 				deleteBatch: deleteBatchQuestionApi
 			},
-			searchParams: {
+			otherSearchParams: {
 				type: props.type,
-				questionType: '317e751103f654a1631725d6e00355bd'
+				questionType: ''
 			},
 			configObj: {
 				title: '试题',
@@ -153,12 +154,11 @@ export default defineComponent({
 		});
 		const clickNode = data => {
 			state.questionTypeList = data.dataList;
-			// state.searchParams.questionType = data.node.id;
-			state.searchParams.questionType = '317e751103f654a1631725d6e00355bd';
-			getDataList(state.searchParams);
+			state.otherSearchParams.questionType = data.node.id;
+			getDataList();
 		};
 		const clickSearch = () => {
-			getDataList(state.searchParams);
+			getDataList();
 		};
 		const clickAdd = () => {
 			state.dataId = '';
@@ -171,7 +171,7 @@ export default defineComponent({
 		const clickCancel = (refresh: boolean) => {
 			state.pageStatus = 'main';
 			if (refresh) {
-				getDataList(state.searchParams);
+				getDataList();
 			}
 		}
 		const {
@@ -194,13 +194,14 @@ export default defineComponent({
 		} = useCrud({
 			uris: state.uris,
 			parentRef: questionRef,
-			isMountedLoad: false
+			isMountedLoad: false,
+			otherParams: state.otherSearchParams
 		});
 		onMounted(() => {
 			if (props.type) {
 				state.buttonAuth = ['searchBtn', 'resetBtn'];
 			}
-			getDataList(state.searchParams);
+			getDataList();
 		});
 		return {
 			questionRef,

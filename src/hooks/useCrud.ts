@@ -13,12 +13,14 @@ interface ICrudParams {
 	},
 	parentRef?: any, // 父级ref
 	isMountedLoad?: boolean, // 是否加载完成请求数据
+	otherParams?: any, // 其他查询参数
 }
 
 export default function({
 													uris,
 													parentRef,
-													isMountedLoad = true
+													isMountedLoad = true,
+													otherParams
 												}: ICrudParams) {
 	const tableRef = ref();
 	const modalFormRef = ref();
@@ -34,7 +36,7 @@ export default function({
 	/**
 	 * 加载表格数据
 	 */
-	const getDataList = (otherSearchParams?) => {
+	const getDataList = () => {
 		if(!uris.page) {
 			ElMessage.error('请设置uris.page属性！');
 			return false;
@@ -47,7 +49,7 @@ export default function({
 		actionMap[reqMethod](uris.page, {
 			...state.pageInfo,
 			...state.searchParams,
-			...otherSearchParams
+			...otherParams
 		}).then(res => {
 			if (res.status === StatusEnum.SUCCESS) {
 				if (parentRef) {
