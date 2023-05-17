@@ -22,11 +22,11 @@
 						</div>
 					</div>
 					<div class='btn-box'>
-						<el-button type='default' @click='changeQuestion("prev")'>上一题</el-button>
-						<el-button type='default' @click='changeQuestion("next")'>下一题</el-button>
+						<el-button type='default' size='small' @click='changeQuestion("prev")'>上一题</el-button>
+						<el-button type='default' size='small' @click='changeQuestion("next")'>下一题</el-button>
 					</div>
 				</div>
-				<div class='answer-card h100'>
+				<div class='answer-card h100 hidden-sm-and-down'>
 					<div class='head'>
 						剩余时间：
 						<span class='count-down' v-if='paperInfo.paper.questionDuration'>00 : 30 : 00</span>
@@ -219,8 +219,6 @@ export default defineComponent({
 			background: #f5f5f5;
 			padding: 20px;
 			.question-area{
-				width: 90%;
-				margin: 0 auto;
 				display: flex;
 				justify-content: space-between;
 				align-items: flex-start;
@@ -234,7 +232,8 @@ export default defineComponent({
 				.question-info{
 					background: #fff;
 					flex: 1;
-					position: relative;
+					overflow: scroll;
+					padding-bottom: 60px;
 					.head{
 						font-size: 20px;
 						font-weight: 700;
@@ -284,7 +283,7 @@ export default defineComponent({
 						}
 					}
 					.btn-box{
-						position: absolute;
+						position: fixed;
 						bottom: 20px;
 						left: 20px;
 					}

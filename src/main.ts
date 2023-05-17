@@ -38,6 +38,7 @@ import other from '/@/utils/other';
 
 import ElementPlus from 'element-plus';
 import '/@/theme/index.scss';
+import 'element-plus/theme-chalk/display.css';
 
 const app = createApp(App);
 
