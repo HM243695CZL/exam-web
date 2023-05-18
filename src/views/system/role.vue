@@ -99,7 +99,7 @@ export default {
 			},
 			menuList: [],
 			configObj: {
-				title: '博客',
+				title: '角色',
 				createPath: createRoleApi,
 				updatePath: updateRoleApi,
 				viewPath: viewRoleApi
