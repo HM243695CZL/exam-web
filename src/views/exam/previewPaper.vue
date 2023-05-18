@@ -1,6 +1,9 @@
 <template>
 	<div class='preview-paper-container h100'>
-		<div class='paper-name'>{{paperInfo.paper.name}}</div>
+		<div class='paper-name'>
+			<el-button class='back-btn' type='default' size='small' @click='clickBack'>返回</el-button>
+			{{paperInfo.paper.name}}
+		</div>
 		<div class='question-content'>
 			<div class='big-list' v-for='item in paperInfo.questionBigList' :key='item.bigId'>
 				<div class='big-question-name'>
@@ -15,7 +18,7 @@
 						</div>
 						<div class='question-item-list'>
 							<div class='question-item' v-for='(e, i) in ele.questionItemList' :key='e.id'>
-								{{itemIndex[i]}}.<span v-html='e.name'></span>
+								<span class='option-item'>{{itemIndex[i]}}.</span><span v-html='e.name'></span>
 							</div>
 						</div>
 						<div class='view-answer' v-if='isRecord'>
@@ -101,6 +104,9 @@ export default defineComponent({
 				}
 			})
 		};
+		const clickBack = () => {
+			window.history.back();
+		};
 		onMounted(() => {
 			const urlMap = other.params2Obj(window.location.href) as any;
 			state.paperId = urlMap.paperId;
@@ -109,7 +115,8 @@ export default defineComponent({
 			getPaperInfo();
 		})
 		return {
-			...toRefs(state)
+			...toRefs(state),
+			clickBack
 		}
 	}
 });
@@ -124,6 +131,12 @@ export default defineComponent({
 			font-weight: 700;
 			font-size: 24px;
 			background: #fff;
+			position: relative;
+			.back-btn{
+				position: absolute;
+				top: 10px;
+				left: 10px;
+			}
 		}
 		.question-content{
 			height: calc(100% - 70px);
@@ -131,7 +144,6 @@ export default defineComponent({
 			background: #f5f5f5;
 			padding: 15px;
 			.big-list{
-				width: 70%;
 				margin: -1px auto;
 				border: 1px solid #ccc;
 				.big-question-name{
@@ -145,7 +157,6 @@ export default defineComponent({
 						.question-name{
 							display: flex;
 							justify-content: space-between;
-							margin-left: 40px;
 							color: #126ac6;
 							padding: 10px 0;
 							.index-number{
@@ -162,15 +173,18 @@ export default defineComponent({
 								}
 							}
 							.score{
-								width: 80px;
-								color: #000;
-								padding-right: 40px;
+								color: #dd4a68;
 							}
 						}
 						.question-item-list{
-							margin-left: 60px;
+							margin-left: 40px;
 							.question-item{
 								padding: 10px 0;
+								display: flex;
+								align-items: flex-start;
+								.option-item{
+									margin-right: 3px;
+								}
 								::v-deep {
 									img{
 										width: 100px;
@@ -184,14 +198,17 @@ export default defineComponent({
 						}
 						.your-answer{
 							padding: 10px 0;
-							margin-left: 50px;
+							margin-left: 20px;
 							display: flex;
 							align-items: center;
+							position: relative;
 							span{
 								color: #f40;
 							}
 							.result{
-								margin-left: 240px;
+								position: absolute;
+								top: 0;
+								right: 20px;
 								.yes{
 									font-size: 30px;
 									color: #3eaf7c;
@@ -208,19 +225,24 @@ export default defineComponent({
 						}
 						.correct-answer{
 							padding: 10px 0;
-							margin-left: 50px;
+							margin-left: 20px;
 							span{
 								color: #126ac6;
 							}
 						}
 						.analysis{
 							padding: 10px 0;
-							margin-left: 50px;
+							margin-left: 20px;
 							color: #f40;
 							line-height: 25px;
 							.analysis-html{
 								margin-left: 10px;
 								margin-top: 10px;
+								:deep(img) {
+									display: block;
+									width: 100%;
+									height: auto;
+								}
 							}
 						}
 					}
@@ -231,7 +253,7 @@ export default defineComponent({
 			position: fixed;
 			top: 85px;
 			right: 20px;
-			padding: 20px;
+			padding: 10px;
 			border: 1px solid #f1f1f1;
 			background: #fff;
 			.paper-score{

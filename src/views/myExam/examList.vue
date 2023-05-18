@@ -54,7 +54,7 @@
 						<div class='score' v-if='item.examScore'>得分：<span>{{item.examScore}}</span></div>
 					</div>
 					<div class='btn-box'>
-						<div class='view-exam' v-if='item.examScore'>查看试卷</div>
+						<div class='view-exam' v-if='item.examScore' @click='clickViewPaper(item.id)'>查看试卷</div>
 						<div class='start-exam' v-else @click='clickStartExam(item.id)'>开始考试</div>
 					</div>
 				</div>
