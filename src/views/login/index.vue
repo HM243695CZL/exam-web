@@ -25,9 +25,6 @@
 								<el-tab-pane label="账号密码登录" name="account">
 									<Account />
 								</el-tab-pane>
-								<el-tab-pane label="手机号登录" name="mobile">
-									<Mobile />
-								</el-tab-pane>
 							</el-tabs>
 						</div>
 						<Scan v-if="state.isScan" />

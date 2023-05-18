@@ -70,8 +70,8 @@
 						<div class='question-btn'>
 							<div class='question-item'>
 								<div class='question single' @click='clickSingle'>单选题</div>
-								<div class='question multiple'>多选题</div>
-								<div class='question determine'>判断题</div>
+<!--								<div class='question multiple'>多选题</div>-->
+<!--								<div class='question determine'>判断题</div>-->
 							</div>
 						</div>
 					</div>

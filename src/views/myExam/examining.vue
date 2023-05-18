@@ -2,6 +2,17 @@
 	<div class='examining-container h100'>
 		<div class='paper-name'>{{paperInfo.paper.name}}</div>
 		<div class='content-box'>
+			<div class='progress-bar'>
+				<el-progress
+					:text-inside="true"
+					:stroke-width="15"
+					:percentage="Math.ceil((Object.keys(answerMap).length / ~~paperInfo.paper.questionCount) * 100)"
+					status="exception"
+					:duration="10"
+				>
+					<span>{{Object.keys(answerMap).length}} / {{~~paperInfo.paper.questionCount}}</span>
+				</el-progress>
+			</div>
 			<div class='question-area h100'>
 				<div class='question-info h100'>
 					<div class='head'>
@@ -15,7 +26,7 @@
 						<div class='list-item-box'>
 							<div class='list-item' v-for='(item, index) in currentQuestionInfo.questionItemList' :key='item.id'>
 								<el-radio-group v-model='chooseAnswer' @change='changeAnswer(item.id)'>
-									<el-radio  :label="item.id" size="large">{{itemIndex[index] + '. '}}</el-radio>
+									<el-radio  :label="item.id" size="default">{{itemIndex[index] + '. '}}</el-radio>
 								</el-radio-group>
 								<span class='item' v-html='item.name'></span>
 							</div>
@@ -24,6 +35,17 @@
 					<div class='btn-box'>
 						<el-button type='default' size='small' @click='changeQuestion("prev")'>上一题</el-button>
 						<el-button type='default' size='small' @click='changeQuestion("next")'>下一题</el-button>
+						<el-button type='default' size='small' @click='clickClose()'>退出考试</el-button>
+						<el-popconfirm
+							:width='tipWidth'
+							:title='tipTitle'
+							@confirm="clickConfirmSubmit"
+							@cancel="clickCancelSubmit"
+						>
+							<template #reference>
+								<el-button class='hidden-sm-and-up' type='primary' size='small' @click='clickSubmitPaper'>交卷</el-button>
+							</template>
+						</el-popconfirm>
 					</div>
 				</div>
 				<div class='answer-card h100 hidden-sm-and-down'>
@@ -153,6 +175,9 @@ export default defineComponent({
 				state.chooseAnswer = state.answerMap[state.currentQuestionInfo.id]
 			}
 		};
+		const clickClose = () => {
+			window.history.back();
+		};
 		const clickAnswerCardIndex = (index, i) => {
 			state.chooseAnswer = '';
 			state.currentBigIndex = index;
@@ -194,6 +219,7 @@ export default defineComponent({
 		return {
 			...toRefs(state),
 			changeQuestion,
+			clickClose,
 			clickAnswerCardIndex,
 			changeAnswer,
 			clickSubmitPaper,
@@ -218,6 +244,9 @@ export default defineComponent({
 			height: calc(100% - 70px);
 			background: #f5f5f5;
 			padding: 20px;
+			.progress-bar{
+				padding-bottom: 10px;
+			}
 			.question-area{
 				display: flex;
 				justify-content: space-between;
@@ -249,7 +278,7 @@ export default defineComponent({
 							padding: 10px 0;
 							.index-number{
 								margin-right: 8px;
-								margin-top: 1px;
+								margin-top: 4px;
 							}
 							.question-name{
 								color: #126ac6;
@@ -265,10 +294,12 @@ export default defineComponent({
 							.list-item{
 								display: flex;
 								justify-content: flex-start;
-								align-items: center;
+								align-items: flex-start;
+								margin-bottom: 5px;
 								color: #000;
 								.item{
 									margin-left: 5px;
+									margin-top: 8px;
 									::v-deep {
 										img{
 											width: 100px;
@@ -284,8 +315,13 @@ export default defineComponent({
 					}
 					.btn-box{
 						position: fixed;
-						bottom: 20px;
-						left: 20px;
+						bottom: 0;
+						left: 0;
+						width: 100%;
+						height: 50px;
+						padding-left: 20px;
+						line-height: 50px;
+						background: #fff;
 					}
 				}
 				.answer-card{
@@ -331,7 +367,7 @@ export default defineComponent({
 							.big-item{
 								display: flex;
 								justify-items: flex-start;
-								flex-wrap: nowrap;
+								flex-wrap: wrap;
 								padding: 10px 0;
 								.question-circle{
 									cursor: pointer;
@@ -343,6 +379,7 @@ export default defineComponent({
 									height: 26px;
 									margin-right: 10px;
 									border-radius: 50%;
+									margin-bottom: 10px;
 									border: 1px solid #ccc;
 									&.active, &:hover{
 										border-color: #126ac6;

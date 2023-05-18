@@ -77,7 +77,7 @@ export default defineComponent({
 						userName: username,
 						photo: avatar,
 						time: 0,
-						roles,
+						roles: [...roles, 'common'],
 						authBtnList: []
 					});
 					// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）

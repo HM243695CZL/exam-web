@@ -217,6 +217,7 @@ export default defineComponent({
 							padding: 10px 0;
 							margin-left: 50px;
 							color: #f40;
+							line-height: 25px;
 							.analysis-html{
 								margin-left: 10px;
 								margin-top: 10px;
