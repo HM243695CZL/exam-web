@@ -6,7 +6,7 @@
 				<el-progress
 					:text-inside="true"
 					:stroke-width="15"
-					:percentage="Math.ceil((Object.keys(answerMap).length / ~~paperInfo.paper.questionCount) * 100)"
+					:percentage="Math.ceil((Object.keys(answerMap).length / ~~paperInfo.paper.questionCount) * 100) || 0"
 					status="exception"
 					:duration="10"
 				>
@@ -35,7 +35,16 @@
 					<div class='btn-box'>
 						<el-button type='default' size='small' @click='changeQuestion("prev")'>上一题</el-button>
 						<el-button type='default' size='small' @click='changeQuestion("next")'>下一题</el-button>
-						<el-button type='default' size='small' @click='clickClose()'>退出考试</el-button>
+						<el-popconfirm
+							width='200'
+							title='是否确定退出考试？'
+							@confirm="clickConfirmClose"
+							@cancel="clickCancelClose"
+						>
+							<template #reference>
+								<el-button class='hidden-sm-and-up' type='default' size='small'>退出考试</el-button>
+							</template>
+						</el-popconfirm>
 						<el-popconfirm
 							:width='tipWidth'
 							:title='tipTitle'
@@ -175,9 +184,12 @@ export default defineComponent({
 				state.chooseAnswer = state.answerMap[state.currentQuestionInfo.id]
 			}
 		};
-		const clickClose = () => {
+		const clickConfirmClose = () => {
 			window.history.back();
 		};
+		const clickCancelClose = () => {
+
+		}
 		const clickAnswerCardIndex = (index, i) => {
 			state.chooseAnswer = '';
 			state.currentBigIndex = index;
@@ -219,12 +231,13 @@ export default defineComponent({
 		return {
 			...toRefs(state),
 			changeQuestion,
-			clickClose,
 			clickAnswerCardIndex,
 			changeAnswer,
 			clickSubmitPaper,
 			clickCancelSubmit,
-			clickConfirmSubmit
+			clickConfirmSubmit,
+			clickConfirmClose,
+			clickCancelClose
 		}
 	}
 });
