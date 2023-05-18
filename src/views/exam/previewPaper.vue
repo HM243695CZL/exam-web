@@ -255,7 +255,7 @@ export default defineComponent({
 			right: 20px;
 			padding: 10px;
 			border: 1px solid #f1f1f1;
-			background: #fff;
+			background: rgba(255, 255, 255, .1);
 			.paper-score{
 				.number{
 					color: #126ac6;
