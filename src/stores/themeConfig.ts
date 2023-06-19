@@ -96,7 +96,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启 TagsView 共用
 			isShareTagsView: false,
 			// 是否开启 Footer 底部版权信息
-			isFooter: false,
+			isFooter: true,
 			// 是否开启灰色模式
 			isGrayscale: false,
 			// 是否开启色弱模式
@@ -104,7 +104,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启水印
 			isWartermark: false,
 			// 水印文案
-			wartermarkText: 'vue-next-admin',
+			wartermarkText: 'exam-admin',
 
 			/**
 			 * 其它设置
@@ -141,7 +141,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 网站副标题（登录页顶部文字）
 			globalViceTitle: '考试系统',
 			// 网站副标题（登录页顶部文字）
-			globalViceTitleMsg: '专注、免费、开源、维护、解疑',
+			globalViceTitleMsg: '在线考试系统',
 			// 默认初始语言，可选值"<zh-cn|en|zh-tw>"，默认 zh-cn
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'
