@@ -7,3 +7,5 @@ export const viewQuestionApi = `${baseQuestionApi}view`;
 export const deleteQuestionApi = `${baseQuestionApi}delete`;
 export const deleteBatchQuestionApi = `${baseQuestionApi}deleteBatch`;
 export const randomChoseQuestionApi = `${baseQuestionApi}randomChoose`;
+export const downloadQuestionTemplateApi = `${baseQuestionApi}downloadModule`;
+export const importQuestionApi = `${baseQuestionApi}importExcel`;

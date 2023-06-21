@@ -22,6 +22,12 @@
 					@clickBatchDelete='clickBatchDelete'
 				>
 					<template #left>
+						<el-button class='mr10' size='default' @click="clickImport">
+							<el-icon>
+								<ele-Upload />
+							</el-icon>
+							导入
+						</el-button>
 						<el-form-item label="题目">
 							<el-input v-model="searchParams.question" placeholder="请输入题目" clearable></el-input>
 						</el-form-item>
@@ -72,6 +78,7 @@
 								:question-type-list='questionTypeList'
 								:data-id='dataId'
 								@clickCancel='clickCancel' />
+		<ImportQuestionModal ref='importQuestionModalRef' />
 	</div>
 </template>
 
@@ -87,6 +94,7 @@ import TypeTree from '/@/components/TypeTree/index.vue';
 import CommonTop from '/@/components/CommonTop/index.vue';
 import PaginationCommon from '/@/components/PaginationCommon/index.vue';
 import QuestionModal from './component/question/questionModal.vue';
+import ImportQuestionModal from './component/question/importQuestionModal.vue';
 import {
 	createQuestionApi, deleteBatchQuestionApi, deleteQuestionApi,
 	getQuestionPageApi, updateQuestionApi,
@@ -100,7 +108,8 @@ export default defineComponent({
 		TypeTree,
 		CommonTop,
 		PaginationCommon,
-		QuestionModal
+		QuestionModal,
+		ImportQuestionModal
 	},
 	props: {
 		type: {
@@ -113,6 +122,7 @@ export default defineComponent({
 	},
 	setup(props) {
 		const questionRef = ref();
+		const importQuestionModalRef = ref();
 		const state = reactive({
 			configTreeObj: {
 				title: '试题分类',
@@ -173,7 +183,10 @@ export default defineComponent({
 			if (refresh) {
 				getDataList();
 			}
-		}
+		};
+		const clickImport = () => {
+			importQuestionModalRef.value.openDialog();
+		};
 		const {
 			tableRef,
 			modalFormRef,
@@ -205,12 +218,14 @@ export default defineComponent({
 		});
 		return {
 			questionRef,
+			importQuestionModalRef,
 			...toRefs(state),
 			clickNode,
 			clickCancel,
 			clickAdd,
 			clickEdit,
 			clickSearch,
+			clickImport,
 
 			tableRef,
 			modalFormRef,

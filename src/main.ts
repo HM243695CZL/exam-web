@@ -5,7 +5,8 @@ import {
 	Table,
 	Icon,
 	Column,
-	Filter
+	Filter,
+	Modal
 } from 'vxe-table';
 import formCreate from '@form-create/element-ui';
 import FcDesigner from '@form-create/designer';
@@ -43,7 +44,7 @@ import 'element-plus/theme-chalk/display.css';
 const app = createApp(App);
 
 function useTable(app: any) {
-	app.use(Table).use(Icon).use(Column).use(Filter);
+	app.use(Table).use(Icon).use(Column).use(Filter).use(Modal);
 }
 VXETable.setup({
 	table: {
@@ -63,6 +64,13 @@ VXETable.setup({
 		sortConfig: {
 			remote: true // 开启后端排序
 		}
+	},
+	modal: {
+		mask: true,
+		duration: 500,
+		showFooter: true,
+		showZoom: false,
+		draggable: false
 	}
 });
 VXETable.formats.add('formatDate', ({ cellValue }) => {
