@@ -21,6 +21,7 @@
 		"dayjs": "^1.11.7",
 		"echarts": "^5.4.2",
 		"element-plus": "^2.3.3",
+		"exceljs": "^4.3.0",
 		"js-cookie": "^3.0.1",
 		"mitt": "^3.0.0",
 		"nprogress": "^0.2.0",
@@ -37,6 +38,7 @@
 		"vue-demi": "^0.13.11",
 		"vue-router": "^4.1.6",
 		"vxe-table": "^4.3.12",
+		"vxe-table-plugin-export-xlsx": "^3.0.4",
 		"xe-utils": "^3.5.7"
 	},
 	"devDependencies": {

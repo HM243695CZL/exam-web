@@ -1,13 +1,7 @@
 import { createApp } from 'vue';
 import dayjs from 'dayjs';
-import {
-	VXETable,
-	Table,
-	Icon,
-	Column,
-	Filter,
-	Modal
-} from 'vxe-table';
+import VXETable from 'vxe-table';
+import VEXTablePluginExportXLSX from 'vxe-table-plugin-export-xlsx';
 import formCreate from '@form-create/element-ui';
 import FcDesigner from '@form-create/designer';
 import 'vxe-table/lib/style.css';
@@ -43,9 +37,10 @@ import 'element-plus/theme-chalk/display.css';
 
 const app = createApp(App);
 
-function useTable(app: any) {
-	app.use(Table).use(Icon).use(Column).use(Filter).use(Modal);
-}
+// function useTable(app: any) {
+// 	app.use(Table).use(Icon).use(Column).use(Filter).use(Modal);
+// }
+VXETable.use(VEXTablePluginExportXLSX);
 VXETable.setup({
 	table: {
 		stripe: true, // 斑马条纹
@@ -92,4 +87,4 @@ other.elSvg(app);
 
 // @ts-ignore
 app.use(pinia).use(router).use(ElementPlus).use(formCreate).use(FcDesigner)
-	.use(useTable).use(VueMarkdownEditor).mount('#app');
+	.use(VXETable).use(VueMarkdownEditor).mount('#app');
