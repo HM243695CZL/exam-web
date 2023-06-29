@@ -78,7 +78,7 @@
 								:question-type-list='questionTypeList'
 								:data-id='dataId'
 								@clickCancel='clickCancel' />
-		<ImportQuestionModal ref='importQuestionModalRef' />
+		<ImportQuestionModal ref='importQuestionModalRef' @refresh-list='getDataList' />
 	</div>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
 	<div class='build-question'>
 		<el-button @click='clickExport'>导出</el-button>
+		共{{dataList.length}}条数据
 		<vxe-table
 			ref='tableRef'
 			:row-config='{
@@ -8,8 +9,10 @@
 						keyField: "id"
 					}'
 			:data='dataList'
+			:max-height='600'
+			:show-overflow='false'
 		>
-			<vxe-column field='question' title='题目名称' />
+			<vxe-column field='question' title='题目名称' width='300' />
 			<vxe-column field='questionType' title='题目分类' />
 			<vxe-column field='type' title='题目类型' />
 			<vxe-column field='difficulty' title='题目难度' />
@@ -26,6 +29,7 @@
 
 <script lang='ts'>
 import { defineComponent, onMounted, reactive, toRefs, ref } from 'vue';
+import {questionStr} from './questionStr';
 
 export default defineComponent({
 	name: 'buildQuestion',
@@ -35,30 +39,7 @@ export default defineComponent({
 			dataList: []
 		})
 		const init = () => {
-			const str = `1 、下列关于中国共产党百年奋斗的历史意义的说法，正确的有几项？
-①锻造了走在时代前列的中国共产党
-②从根本上改变了中国人民的前途命运
-③开辟了实现中华民族伟大复兴的正确道路
-④展示了马克思主义的强大生命力，并深刻影响了世界历史进度
-A.1 B.2
-C.3 D.4
-2 、实现碳达峰、碳中和目标，是贯彻新发展理念、构建新发展格局、推动高质量发展的内在要求。下列关于双碳工作的说法错误的是
-A.推进双创工作是破解资源环境约束突出问题，实现可持续发展的迫切需要
-B.要倡导节约适度、绿色低碳、文明健康的生活方式，引导绿色健康消费，鼓励绿色出行
-C.推进双碳工作，必须坚持全国统筹、节约优先、双轮驱动、内外畅通、防范风险的原则
-D.要坚决遏制钢铁、有色、石化、化工、建材等高耗能、高污染、低水平项目发展。
-严把新上项目的碳排放关
-3 、假如中外举办联合画展，下列作品标签信息错误的是
-A.德国画家米勒——《拾穗者》
-B.元代画家赵孟頫——《秋郊饮马图》
-C.西班牙画家毕加索——《格尔尼卡》
-D.五代南唐画家顾国中——《韩熙载夜宴图》
-4 、下列关于我国石窟的说法错误的是
-A.麦积山石窟因其精美的泥塑艺术闻名
-B.龙门石窟的造像多为皇家贵族所建
-C.大足石窟开凿于秦汉时期
-D.大象山石窟位于甘肃省
-`;
+			const str = questionStr;
 			let index = 0;
 			const indexArr = [];
 			while (index !== -1) {
@@ -69,13 +50,34 @@ D.大象山石窟位于甘肃省
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
 					qArr.push(str.slice(3, indexArr[1]));
+				} else if(i >= 8) {
+					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
 				} else {
 					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1]))
 				}
 			}
 			qArr.splice(-1);
 			const questionArr = [];
-			const answerArr = ['D', 'D', 'A', 'C'];
+			const answerArr = [
+				'D', 'D', 'A', 'C', 'C',
+				'A', 'D', 'B', 'C', 'D',
+				'A', 'A', 'D', 'D', 'A',
+				'D', 'C', 'B', 'A', 'C',
+				'B', 'B', 'D', 'A', 'A',
+				'C', 'D', 'A', 'C', 'A',
+				'D', 'B', 'A', 'D', 'A',
+				'A', 'B', 'D', 'A', 'B',
+				'C', 'D', 'B', 'A', 'B',
+				'A', 'D', 'A', 'C', 'D',
+				'C', 'C', 'A', 'B', 'B',
+				'D', 'B', 'C', 'B', 'B',
+				'B', 'B', 'A', 'C', 'A',
+				'C', 'A', 'D', 'C', 'B',
+				'C', 'D', 'A', 'B', 'D',
+				'B', 'A', 'C', 'D', 'B',
+				'B', 'C', 'C', 'D', 'B',
+				'C', 'D', 'C', 'B'
+			];
 			qArr.map((item, index) => {
 				const q = item.split('A.')[0];
 				const A = item.split('A.')[1].split('B.')[0];
@@ -83,7 +85,7 @@ D.大象山石窟位于甘肃省
 				const C = item.split('C.')[1].split('D.')[0];
 				const D = item.split('D.')[1];
 				questionArr.push({
-					question: q,
+					question: q.replace(/\n/g, ''),
 					questionType: '2022.7.9贵州省公务员考试',
 					type: '单选题',
 					difficulty: '简单',
