@@ -12,6 +12,7 @@
 			:max-height='600'
 			:show-overflow='false'
 		>
+			<vxe-column type='seq' title='序号' />
 			<vxe-column field='question' title='题目名称' width='300' />
 			<vxe-column field='questionType' title='题目分类' />
 			<vxe-column field='type' title='题目类型' />
@@ -52,7 +53,7 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(3, indexArr[1]));
+					qArr.push(str.slice(4, indexArr[1]));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
 				} else {
@@ -78,7 +79,7 @@ export default defineComponent({
 					C,
 					D,
 					answer: state.answerList[index],
-					analysis: state.analysisList[index].replace(/\n/g, '')
+					analysis: state.analysisList[index]
 				})
 			});
 			state.dataList = questionArr;
@@ -94,11 +95,11 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(6, indexArr[1]));
+					qArr.push(str.slice(7, indexArr[1] - 1));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
 				} else {
-					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1]))
+					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
 				}
 			}
 			qArr.splice(-1);
