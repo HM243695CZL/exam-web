@@ -22,7 +22,7 @@
 			<vxe-column field='C' title='题目选项C' />
 			<vxe-column field='D' title='题目选项D' />
 			<vxe-column field='answer' title='题目答案' />
-			<vxe-column field='analysis' title='题目解析' />
+			<vxe-column field='analysis' title='题目解析' width='300'/>
 		</vxe-table>
 	</div>
 </template>
@@ -30,15 +30,18 @@
 <script lang='ts'>
 import { defineComponent, onMounted, reactive, toRefs, ref } from 'vue';
 import {questionStr} from './questionStr';
+import { answerStr} from './answerStr';
 
 export default defineComponent({
 	name: 'buildQuestion',
 	setup() {
 		const tableRef = ref();
 		const state = reactive({
-			dataList: []
+			dataList: [],
+			answerList: [],
+			analysisList: []
 		})
-		const init = () => {
+		const initQuestion = () => {
 			const str = questionStr;
 			let index = 0;
 			const indexArr = [];
@@ -58,26 +61,6 @@ export default defineComponent({
 			}
 			qArr.splice(-1);
 			const questionArr = [];
-			const answerArr = [
-				'D', 'D', 'A', 'C', 'C',
-				'A', 'D', 'B', 'C', 'D',
-				'A', 'A', 'D', 'D', 'A',
-				'D', 'C', 'B', 'A', 'C',
-				'B', 'B', 'D', 'A', 'A',
-				'C', 'D', 'A', 'C', 'A',
-				'D', 'B', 'A', 'D', 'A',
-				'A', 'B', 'D', 'A', 'B',
-				'C', 'D', 'B', 'A', 'B',
-				'A', 'D', 'A', 'C', 'D',
-				'C', 'C', 'A', 'B', 'B',
-				'D', 'B', 'C', 'B', 'B',
-				'B', 'B', 'A', 'C', 'A',
-				'C', 'A', 'D', 'C', 'B',
-				'C', 'D', 'A', 'B', 'D',
-				'B', 'A', 'C', 'D', 'B',
-				'B', 'C', 'C', 'D', 'B',
-				'C', 'D', 'C', 'B'
-			];
 			qArr.map((item, index) => {
 				const q = item.split('A.')[0];
 				const A = item.split('A.')[1].split('B.')[0];
@@ -86,7 +69,7 @@ export default defineComponent({
 				const D = item.split('D.')[1];
 				questionArr.push({
 					question: q.replace(/\n/g, ''),
-					questionType: '2022.7.9贵州省公务员考试',
+					questionType: '常识判断',
 					type: '单选题',
 					difficulty: '简单',
 					score: 5,
@@ -94,12 +77,40 @@ export default defineComponent({
 					B,
 					C,
 					D,
-					answer: answerArr[index],
-					analysis: ''
+					answer: state.answerList[index],
+					analysis: state.analysisList[index].replace(/\n/g, '')
 				})
 			});
 			state.dataList = questionArr;
 		};
+		const initAnswer = () => {
+			const str = answerStr;
+			let index = 0;
+			const indexArr = [];
+			while (index !== -1) {
+				index = str.indexOf('.【答案】', index + 1);
+				indexArr.push(index - 1);
+			}
+			const qArr = [];
+			for (let i = 0; i < indexArr.length; i++) {
+				if (i === 0) {
+					qArr.push(str.slice(6, indexArr[1]));
+				} else if(i >= 8) {
+					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
+				} else {
+					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1]))
+				}
+			}
+			qArr.splice(-1);
+			const answerArr = [];
+			const analysisArr = [];
+			qArr.map(item => {
+				answerArr.push(item.slice(0, 1));
+				analysisArr.push(item.slice(2));
+			});
+			state.answerList = answerArr;
+			state.analysisList = analysisArr;
+		}
 		const clickExport = () => {
 			tableRef.value.exportData({
 				type: 'xlsx',
@@ -108,8 +119,8 @@ export default defineComponent({
 			})
 		};
 		onMounted(() => {
-			init();
-
+			initAnswer();
+			initQuestion();
 		});
 		return {
 			tableRef,
