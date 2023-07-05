@@ -12,7 +12,7 @@
 			:max-height='600'
 			:show-overflow='false'
 		>
-			<vxe-column type='seq' title='序号' />
+<!--			<vxe-column type='seq' title='序号' />-->
 			<vxe-column field='question' title='题目名称' width='300' />
 			<vxe-column field='questionType' title='题目分类' />
 			<vxe-column field='type' title='题目类型' />
