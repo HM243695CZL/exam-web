@@ -2,6 +2,7 @@
 	<div class='build-question'>
 		<el-button @click='clickExport'>导出</el-button>
 		共{{dataList.length}}条数据
+		答案{{answerList.length}}条数据
 		<vxe-table
 			ref='tableRef'
 			:row-config='{
@@ -53,11 +54,11 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(4, indexArr[1]));
+					qArr.push(str.slice(5, indexArr[1] - 2));
 				} else if(i >= 8) {
-					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
+					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 2))
 				} else {
-					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1]))
+					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 2))
 				}
 			}
 			qArr.splice(-1);
@@ -95,11 +96,11 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(7, indexArr[1] - 1));
+					qArr.push(str.slice(8, indexArr[1] - 2));
 				} else if(i >= 8) {
-					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
+					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 2))
 				} else {
-					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
+					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 2))
 				}
 			}
 			qArr.splice(-1);
