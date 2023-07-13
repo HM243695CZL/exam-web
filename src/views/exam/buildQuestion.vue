@@ -54,11 +54,12 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(3, indexArr[1] - 2));
+					// qArr.push(str.slice(3, indexArr[1] - 2));
+					qArr.push(str.slice(5, indexArr[1] - 2));
 				} else if(i >= 8) {
-					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
+					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 2))
 				} else {
-					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1]))
+					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 2))
 				}
 			}
 			qArr.splice(-1);
@@ -71,7 +72,7 @@ export default defineComponent({
 				const D = item.split('D.')[1];
 				questionArr.push({
 					question: q.replace(/\n/g, ''),
-					questionType: '常识判断',
+					questionType: '言语理解与表达',
 					type: '单选题',
 					difficulty: '简单',
 					score: 5,
@@ -79,7 +80,7 @@ export default defineComponent({
 					B,
 					C,
 					D,
-					answer: state.answerList[index],
+					answer: state.answerList[index].toUpperCase(),
 					analysis: state.analysisList[index]
 				})
 			});
@@ -96,7 +97,7 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(6, indexArr[1] - 2));
+					qArr.push(str.slice(8, indexArr[1] - 2));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 2))
 				} else {
