@@ -54,8 +54,8 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					// qArr.push(str.slice(3, indexArr[1] - 2));
-					qArr.push(str.slice(5, indexArr[1] - 2));
+					qArr.push(str.slice(3, indexArr[1] - 2));
+					// qArr.push(str.slice(5, indexArr[1] - 2));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
 				} else {
@@ -80,7 +80,7 @@ export default defineComponent({
 					B,
 					C,
 					D,
-					answer: state.answerList[index].toUpperCase(),
+					answer: state.answerList[index],
 					analysis: state.analysisList[index]
 				})
 			});
