@@ -79,10 +79,10 @@ const getTreeList = () => {
 			if (res.data.length) {
 				if (!props.defaultNode) {
 					state.currentNode = res.data[0].id;
-					emits('clickNode', {
-						node: res.data[0],
-						dataList: state.dataList,
-					});
+					// emits('clickNode', {
+					// 	node: res.data[0],
+					// 	dataList: state.dataList,
+					// });
 				} else {
 					state.currentNode = props.defaultNode;
 				}

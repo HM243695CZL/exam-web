@@ -131,7 +131,6 @@ export default defineComponent({
 		} = useCrud({
 			uris: state.uris,
 			parentRef: reviewRef,
-			isMountedLoad: false,
 			otherParams: state.otherSearchParams
 		});
 		const clickNode = data => {
