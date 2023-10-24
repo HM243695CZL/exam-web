@@ -17,7 +17,7 @@
 				<Editor ref='contentEditorRef' :content='state.ruleForm.content' :height='300' @editorBlur='changeContent' />
 			</el-form-item>
 			<el-form-item label='原文图片' prop='pictureUrl'>
-				<SingleUpload :source-url="state.ruleForm.pictureUrl" @change-source-url="changePictureUrl" />
+				<MultiUpload :list='state.ruleForm.pictureUrl' :max-count='5' @change-file-list='changeFileList' />
 			</el-form-item>
 		</el-form>
 		<div class='btn'>
@@ -30,12 +30,12 @@
 <script setup lang='ts'>
 import { onMounted, reactive, ref } from 'vue';
 import Editor from '/@/components/Editor/Wangeditor.vue';
-import SingleUpload from '/@/components/Upload/SingleUpload.vue';
+import MultiUpload from '/@/components/Upload/MultiUpload.vue';
 import { createReviewApi, updateReviewApi, viewReviewApi } from '/@/api/exam/review';
 import { getAction, postAction } from '/@/api/common';
 import { StatusEnum } from '/@/common/status.enum';
 import { ElMessage } from 'element-plus';
-import other from '/@/utils/other';
+import other, { deepClone } from '/@/utils/other';
 
 const emits = defineEmits([
 	'clickCancel'
@@ -56,7 +56,7 @@ const state = reactive({
 		id: '',
 		reviewType: '',
 		content: '',
-		pictureUrl: ''
+		pictureUrl: []
 	},
 	rules: {
 		content: [
@@ -70,13 +70,15 @@ const clickCancel = () => {
 const changeContent = value => {
 	state.ruleForm.content = value;
 };
-const changePictureUrl = url => {
-	state.ruleForm.pictureUrl = url;
-}
+const changeFileList = value => {
+	state.ruleForm.pictureUrl = value;
+};
 const clickConfirm = () => {
 	formRef.value.validate((valid: boolean) => {
 		if (valid) {
-			postAction(state.ruleForm.id ? updateReviewApi : createReviewApi, state.ruleForm).then(res => {
+			const formData = deepClone(state.ruleForm);
+			formData.pictureUrl = state.ruleForm.pictureUrl.map(item => item.url).join(',')
+			postAction(state.ruleForm.id ? updateReviewApi : createReviewApi, formData).then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
 					ElMessage.success(res.message);
 					emits('clickCancel', true);
@@ -93,6 +95,12 @@ onMounted(() => {
 			if (res.status === StatusEnum.SUCCESS) {
 				state.ruleForm = other.formatFormMap(state.ruleForm, res.data) as any;
 				contentEditorRef.value.editorRef.setHtml(state.ruleForm.content);
+				state.ruleForm.pictureUrl = state.ruleForm.pictureUrl.split(',').map(item => {
+					return {
+						name: item.substr(item.lastIndexOf('/') + 1),
+						url: item
+					}
+				});
 			}
 		});
 	}

@@ -138,6 +138,9 @@ const clickNode = (data) => {
 onMounted(() => {
 	getTreeList();
 });
+defineExpose({
+	state
+})
 </script>
 
 <style scoped lang='scss'>

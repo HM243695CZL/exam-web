@@ -9,6 +9,7 @@
 					:get-list-path='configTreeObj.getListPath'
 					:delete-path='configTreeObj.deletePath'
 					@clickNode='clickNode($event)'
+					ref='typeTreeRef'
 					:default-node='otherSearchParams.reviewType'
 				/>
 			</div>
@@ -91,6 +92,7 @@ export default defineComponent({
 	},
 	setup() {
 		const reviewRef = ref();
+		const typeTreeRef = ref();
 		const state = reactive({
 			configTreeObj: {
 				title: '复习分类',
@@ -134,15 +136,16 @@ export default defineComponent({
 			otherParams: state.otherSearchParams
 		});
 		const clickNode = data => {
-			state.reviewTypeList = data.dataList;
 			state.otherSearchParams.reviewType = data.node.id;
 			getDataList();
 		};
 		const clickAdd = () => {
+			state.reviewTypeList = typeTreeRef.value.state.dataList;
 			state.dataId = '';
 			state.pageStatus = 'info';
 		};
 		const clickEdit = dataId => {
+			state.reviewTypeList = typeTreeRef.value.state.dataList;
 			state.dataId = dataId;
 			state.pageStatus = 'info';
 		}
@@ -154,6 +157,7 @@ export default defineComponent({
 		};
 		return {
 			reviewRef,
+			typeTreeRef,
 			...toRefs(state),
 			clickNode,
 			clickAdd,

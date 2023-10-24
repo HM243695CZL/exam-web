@@ -6,7 +6,6 @@
 			:action="dataObj.host"
 			:data='dataObj'
 			:on-remove="handleRemove"
-			:before-upload='handleBeforeUpload'
 			:on-success='handleSuccess'
 			:file-list="imgList"
 			:limit="maxCount"
@@ -19,7 +18,7 @@
 </template>
 
 <script lang='ts'>
-import { computed, defineComponent, reactive, toRefs } from 'vue';
+import { computed, defineComponent, onMounted, reactive, toRefs } from 'vue';
 import { policyApi } from '/@/api/oss';
 import { StatusEnum } from '/@/common/status.enum';
 import { getAction } from '/@/api/common';
@@ -63,18 +62,17 @@ export default defineComponent({
 			ctx.emit('changeFileList', fileList)
 		};
 		const handleRemove = (file: any) => {
-			console.log(file);
+			changeFileList(imgList.value);
 		};
 		const handleSuccess = (res: any, file: any) => {
 			const url = state.dataObj.host + '/' + state.dataObj.dir + '/' + file.name;
-			imgList.value.pop();
 			imgList.value.push({
 				name: file.name,
 				url
 			});
 			changeFileList(imgList.value);
 		};
-		const handleBeforeUpload = () => {
+		const getPolicyData = () => {
 			return new Promise(((resolve, reject) => {
 				getAction(policyApi, '').then(res => {
 					if (res.status === StatusEnum.SUCCESS) {
@@ -92,8 +90,10 @@ export default defineComponent({
 				})
 			}))
 		};
+		onMounted(() => {
+			getPolicyData();
+		});
 		return {
-			handleBeforeUpload,
 			handleRemove,
 			handleSuccess,
 			imgList,
