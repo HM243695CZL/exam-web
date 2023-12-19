@@ -49,20 +49,22 @@ export default defineComponent({
 			const indexArr = [];
 			while (index !== -1) {
 				index = str.indexOf(' 、', index + 1);
-				indexArr.push(index - 1);
+				if (index > 0) {
+					indexArr.push(index - 1);
+				}
 			}
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
 					qArr.push(str.slice(3, indexArr[1] - 2));
-					// qArr.push(str.slice(5, indexArr[1] - 2));
+				} else if (i === (indexArr.length - 1)) {
+					qArr.push(str.slice(indexArr[i] + 3));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
 				} else {
 					qArr.push(str.slice(indexArr[i] + 3, indexArr[i + 1] - 1))
 				}
 			}
-			qArr.splice(-1);
 			const questionArr = [];
 			qArr.map((item, index) => {
 				const q = item.split('A.')[0];
@@ -92,19 +94,22 @@ export default defineComponent({
 			const indexArr = [];
 			while (index !== -1) {
 				index = str.indexOf('.【答案】', index + 1);
-				indexArr.push(index - 1);
+				if (index > 0) {
+					indexArr.push(index - 1);
+				}
 			}
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
 					qArr.push(str.slice(6, indexArr[1] - 1));
+				} else if (i === (indexArr.length - 1)) {
+					qArr.push(str.slice(indexArr[i] + 6));
 				} else if(i >= 8) {
 					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
 				} else {
 					qArr.push(str.slice(indexArr[i] + 6, indexArr[i + 1] - 1))
 				}
 			}
-			qArr.splice(-1);
 			const answerArr = [];
 			const analysisArr = [];
 			qArr.map(item => {
