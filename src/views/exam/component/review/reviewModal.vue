@@ -14,10 +14,10 @@
 				></el-tree-select>
 			</el-form-item>
 			<el-form-item label='内容' prop='content'>
-				<Editor ref='contentEditorRef' :content='state.ruleForm.content' :height='300' @editorBlur='changeContent' />
+				<Editor ref='contentEditorRef' :content='state.ruleForm.content' :height='500' @editorBlur='changeContent' />
 			</el-form-item>
 			<el-form-item label='原文图片' prop='pictureUrl'>
-				<MultiUpload :list='state.ruleForm.pictureUrl' :max-count='5' @change-file-list='changeFileList' />
+				<MultiUpload :list='state.ruleForm.pictureUrl' @change-file-list='changeFileList' />
 			</el-form-item>
 		</el-form>
 		<div class='btn'>

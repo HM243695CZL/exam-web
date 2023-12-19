@@ -28,7 +28,7 @@ export default defineComponent({
 	props: {
 		maxCount: {
 			type: Number,
-			default: 5
+			default: 50
 		},
 		list: {
 			type: Array,
