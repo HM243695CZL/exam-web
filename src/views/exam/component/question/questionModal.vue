@@ -43,13 +43,15 @@
 					</el-radio-group>
 					<div class='name'>
 						<Editor :ref='"questionItemNameRef" + index' :content='item.name' :height='100' @editorBlur='changeQuestionItemName($event, index)' />
-<!--						<el-input v-model='item.name' placeholder='请输入选项' clearable></el-input>-->
 					</div>
 					<div class='remove-item' @click='clickRemoveItem(index)'>
 						<SvgIcon name='ele-Remove'></SvgIcon>
 					</div>
 				</div>
 				<el-button type='default' @click='clickAddItem'>添加选项</el-button>
+			</el-form-item>
+			<el-form-item label='题目图片' prop='questionUrl'>
+				<MultiUpload :list='state.ruleForm.questionUrl' @change-file-list='changeQuestionUrlList' />
 			</el-form-item>
 			<div v-if='[1, 2, 3].includes(state.ruleForm.type)' class='tip'>注：选中的选项为正确答案，至少有两项</div>
 			<el-form-item label="解析" prop="analysis">
@@ -70,7 +72,8 @@ import { getAction, postAction } from '/@/api/common';
 import { createQuestionApi, updateQuestionApi, viewQuestionApi } from '/@/api/exam/question';
 import { StatusEnum } from '/@/common/status.enum';
 import { ElMessage } from 'element-plus';
-import other from '/@/utils/other';
+import other, { deepClone } from '/@/utils/other';
+import MultiUpload from '/@/components/Upload/MultiUpload.vue';
 const emits = defineEmits([
 	'clickCancel'
 ]);
@@ -96,6 +99,7 @@ const state = reactive({
 		type: 1,
 		questionType: '',
 		difficulty: 1,
+		questionUrl: [],
 		questionItemList: [
 			{
 				key: new Date().getTime(),
@@ -148,34 +152,36 @@ const clickCancel = () => {
 	emits('clickCancel', false);
 };
 const clickConfirm = () => {
-	if (state.ruleForm.type === 2) {
+	const formData = deepClone(state.ruleForm);
+	if (formData.type === 2) {
 		const answerArr = [];
-		state.ruleForm.questionItemList.map((item, index) => {
+		formData.questionItemList.map((item, index) => {
 			if (item.check) {
 				answerArr.push(state.itemIndex[index]);
 			}
 		});
-		state.ruleForm.answer = answerArr.join(',');
+		formData.answer = answerArr.join(',');
 	}
 	formRef.value.validate((valid: boolean) => {
 		if (valid) {
-			if (state.ruleForm.type !== 4) {
-				if (!state.ruleForm.answer) {
+			if (formData.type !== 4) {
+				if (!formData.answer) {
 					ElMessage.error('请选择答案');
 					return false;
 				}
-				if (state.ruleForm.type === 2) {
-					if (state.ruleForm.answer.split(',').length < 2) {
+				if (formData.type === 2) {
+					if (formData.answer.split(',').length < 2) {
 						ElMessage.error('至少需要两个答案');
 						return false;
 					}
 				}
-				if (state.ruleForm.questionItemList.length < 2) {
+				if (formData.questionItemList.length < 2) {
 					ElMessage.error('选项至少两个');
 					return false;
 				}
 			}
-			postAction(state.ruleForm.id ? updateQuestionApi : createQuestionApi, state.ruleForm).then(res => {
+			formData.pictureUrl = state.ruleForm.questionUrl.map(item => item.url).join(',');
+			postAction(state.ruleForm.id ? updateQuestionApi : createQuestionApi, formData).then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
 					ElMessage.success(res.message);
 					emits('clickCancel', true);
@@ -205,6 +211,9 @@ const clickAddItem = () => {
 const clickRemoveItem = (index: number) => {
 	state.ruleForm.questionItemList.splice(index, 1);
 };
+const changeQuestionUrlList = value => {
+	state.ruleForm.questionUrl = value;
+}
 const changeAnalysis = (value: string) => {
 	state.ruleForm.analysis = value;
 };
@@ -222,6 +231,14 @@ onMounted(() => {
 				})
 				questionEditorRef.value.editorRef.setHtml(state.ruleForm.question);
 				analysisEditorRef.value.editorRef.setHtml(state.ruleForm.analysis);
+				if (state.ruleForm.questionUrl) {
+					state.ruleForm.questionUrl = state.ruleForm.questionUrl.split(',').map(item => {
+						return {
+							name: item.substr(item.lastIndexOf('/') + 1),
+							url: item
+						}
+					});
+				}
 				if (state.ruleForm.type === 2) {
 					const answerIndex = [];
 					state.itemIndex.map((item, index) => {
