@@ -22,6 +22,7 @@
 						<div class='question-title'>
 							<div class='index-number'>{{currentQuestionIndex + 1}}. </div>
 							<div class='question-name' v-html='currentQuestionInfo.question'></div>
+							<el-button v-if='currentQuestionInfo.questionUrl' size='small' class='view-origin-q' @click='clickViewOrigin'>查看原题</el-button>
 						</div>
 						<div class='list-item-box'>
 							<div class='list-item' v-for='(item, index) in currentQuestionInfo.questionItemList' :key='item.id'>
@@ -99,20 +100,26 @@
 				</div>
 			</div>
 		</div>
+		<ViewImgModal ref='viewImgModalRef' />
 	</div>
 </template>
 
 <script lang='ts'>
-import { defineComponent, onMounted, reactive, toRefs } from 'vue';
+import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue';
 import { getAction, postAction } from '/@/api/common';
 import { previewPaperApi, submitPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
 import { ElMessage } from 'element-plus';
+import ViewImgModal from '/@/components/ViewImgModal/index.vue';
 
 export default defineComponent({
 	name: 'examining',
+	components: {
+		ViewImgModal
+	},
 	setup() {
+		const viewImgModalRef = ref();
 		const state = reactive({
 			id: '',
 			paperInfo: {
@@ -145,6 +152,9 @@ export default defineComponent({
 					}
 				}
 			})
+		};
+		const clickViewOrigin = () => {
+			viewImgModalRef.value.openDialog(state.currentQuestionInfo.questionUrl);
 		};
 		const changeQuestion = type => {
 			if (type === 'prev') {
@@ -237,7 +247,9 @@ export default defineComponent({
 			clickCancelSubmit,
 			clickConfirmSubmit,
 			clickConfirmClose,
-			clickCancelClose
+			clickCancelClose,
+			clickViewOrigin,
+			viewImgModalRef
 		}
 	}
 });
@@ -289,6 +301,7 @@ export default defineComponent({
 							margin-left: 20px;
 							font-weight: 700;
 							padding: 10px 0;
+							position: relative;
 							.index-number{
 								margin-right: 8px;
 								margin-top: 4px;
@@ -300,6 +313,11 @@ export default defineComponent({
 									display: inline-block;
 									color: #000;
 								}
+							}
+							.view-origin-q{
+								position: absolute;
+								top: 10px;
+								right: 10px;
 							}
 						}
 						.list-item-box{

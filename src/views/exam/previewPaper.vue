@@ -15,6 +15,7 @@
 							<div class='index-number'>{{index + 1}}. </div>
 							<div class='question-name-text' v-html='ele.question'></div>
 							<div class='score'>({{ele.score}}分)</div>
+							<el-button size='small' class='view-origin' @click='clickViewOrigin(ele)'>查看原题</el-button>
 						</div>
 						<div class='question-item-list'>
 							<div class='question-item' v-for='(e, i) in ele.questionItemList' :key='e.id'>
@@ -53,21 +54,25 @@
 				</div>
 			</div>
 		</div>
+		<ViewImgModal ref='viewImgModalRef' />
 	</div>
 </template>
 
 <script lang='ts'>
-import { defineComponent, onMounted, reactive, toRefs } from 'vue';
+import { defineComponent, onMounted, reactive, ref, toRefs } from 'vue';
 import { getAction } from '/@/api/common';
 import { previewPaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
 import allRightImg from '/@/assets/img/all-right.png';
 import forkImg from '/@/assets/img/fork.png'
+import ViewImgModal from '/@/components/ViewImgModal/index.vue';
 
 export default defineComponent({
 	name: 'previewPaper',
+	components: { ViewImgModal },
 	setup() {
+		const viewImgModalRef = ref();
 		const state = reactive({
 			paperId: '',
 			paperInfo: {
@@ -104,6 +109,16 @@ export default defineComponent({
 				}
 			})
 		};
+		const clickViewOrigin = (data) => {
+			let imgArr = [];
+			if (data.questionUrl) {
+				imgArr = data.questionUrl.split(',');
+			}
+			if (data.analysisUrl) {
+				imgArr = imgArr.concat(data.analysisUrl.split(','));
+			}
+			viewImgModalRef.value.openDialog(imgArr.join(','));
+		};
 		const clickBack = () => {
 			window.history.back();
 		};
@@ -116,7 +131,9 @@ export default defineComponent({
 		})
 		return {
 			...toRefs(state),
-			clickBack
+			clickBack,
+			clickViewOrigin,
+			viewImgModalRef
 		}
 	}
 });
@@ -159,6 +176,12 @@ export default defineComponent({
 							justify-content: space-between;
 							color: #126ac6;
 							padding: 10px 0;
+							position: relative;
+							.view-origin{
+								position: absolute;
+								top: 20px;
+								right: 10px;
+							}
 							.index-number{
 								width: 20px;
 								margin-top: 3px;

@@ -30,7 +30,7 @@
 				<vxe-column title="交卷时间" field='submitTime'/>
 				<vxe-column title="操作" width="140">
 					<template #default="scope">
-						<el-button v-if='!scope.row.examScore' size='small' type='default' @click="clickStartExam(scope.row.id)">开始考试</el-button>
+						<el-button v-if='scope.row.examScore === null' size='small' type='default' @click="clickStartExam(scope.row.id)">开始考试</el-button>
 						<el-button v-else size='small' type='default' @click="clickViewPaper(scope.row.id)">查看试卷</el-button>
 					</template>
 				</vxe-column>
@@ -54,8 +54,8 @@
 						<div class='score' v-if='item.examScore'>得分：<span>{{item.examScore}}</span></div>
 					</div>
 					<div class='btn-box'>
-						<div class='view-exam' v-if='item.examScore' @click='clickViewPaper(item.id)'>查看试卷</div>
-						<div class='start-exam' v-else @click='clickStartExam(item.id)'>开始考试</div>
+						<div class='start-exam' v-if='item.examScore === null' @click='clickStartExam(item.id)'>开始考试</div>
+						<div class='view-exam' v-else  @click='clickViewPaper(item.id)'>查看试卷</div>
 					</div>
 				</div>
 			</div>
