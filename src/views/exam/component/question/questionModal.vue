@@ -58,6 +58,9 @@
 				<Editor ref='analysisEditorRef' :content='state.ruleForm.analysis' :height='300' @editorBlur='changeAnalysis' />
 			</el-form-item>
 		</el-form>
+		<el-form-item label='解析图片' prop='analysisUrl'>
+			<MultiUpload :list='state.ruleForm.analysisUrl' @change-file-list='changeAnalysisUrlList' />
+		</el-form-item>
 		<div class='btn'>
 			<el-button type='default' @click='clickCancel'>取消</el-button>
 			<el-button type='primary' @click='clickConfirm'>确定</el-button>
@@ -100,6 +103,7 @@ const state = reactive({
 		questionType: '',
 		difficulty: 1,
 		questionUrl: [],
+		analysisUrl: [],
 		questionItemList: [
 			{
 				key: new Date().getTime(),
@@ -180,7 +184,8 @@ const clickConfirm = () => {
 					return false;
 				}
 			}
-			formData.pictureUrl = state.ruleForm.questionUrl.map(item => item.url).join(',');
+			formData.questionUrl = state.ruleForm.questionUrl.map(item => item.url).join(',');
+			formData.analysisUrl = state.ruleForm.analysisUrl.map(item => item.url).join(',');
 			postAction(state.ruleForm.id ? updateQuestionApi : createQuestionApi, formData).then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
 					ElMessage.success(res.message);
@@ -214,6 +219,9 @@ const clickRemoveItem = (index: number) => {
 const changeQuestionUrlList = value => {
 	state.ruleForm.questionUrl = value;
 }
+const changeAnalysisUrlList = value => {
+	state.ruleForm.analysisUrl = value;
+}
 const changeAnalysis = (value: string) => {
 	state.ruleForm.analysis = value;
 };
@@ -238,6 +246,18 @@ onMounted(() => {
 							url: item
 						}
 					});
+				} else {
+					state.ruleForm.questionUrl = [];
+				}
+				if (state.ruleForm.analysisUrl) {
+					state.ruleForm.analysisUrl = state.ruleForm.analysisUrl.split(',').map(item => {
+						return {
+							name: item.substr(item.lastIndexOf('/') + 1),
+							url: item
+						}
+					});
+				} else {
+					state.ruleForm.analysisUrl = [];
 				}
 				if (state.ruleForm.type === 2) {
 					const answerIndex = [];
