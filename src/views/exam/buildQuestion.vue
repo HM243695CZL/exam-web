@@ -56,7 +56,7 @@ export default defineComponent({
 			const qArr = [];
 			for (let i = 0; i < indexArr.length; i++) {
 				if (i === 0) {
-					qArr.push(str.slice(3, indexArr[1] - 2));
+					qArr.push(str.slice(3, indexArr[1] - 1));
 				} else if (i === (indexArr.length - 1)) {
 					qArr.push(str.slice(indexArr[i] + 3));
 				} else if(i >= 8) {
