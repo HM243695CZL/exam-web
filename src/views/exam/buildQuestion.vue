@@ -78,10 +78,10 @@ export default defineComponent({
 					type: '单选题',
 					difficulty: '简单',
 					score: 5,
-					A,
-					B,
-					C,
-					D,
+					A: addTwoSpace(A),
+					B: addTwoSpace(B),
+					C: addTwoSpace(C),
+					D: addTwoSpace(D),
 					answer: state.answerList[index],
 					analysis: state.analysisList[index]
 				})
@@ -126,6 +126,18 @@ export default defineComponent({
 				data: tableRef.value.data
 			})
 		};
+		const addTwoSpace = (str) => {
+			const aArr = [];
+			for (let i = 0; i < str.length; i++) {
+				if (i % 2 === 0) {
+					aArr.push(str[i]);
+				} else {
+					aArr.push(str[i]);
+					aArr.push(' ');
+				}
+			}
+			return aArr.join('');
+		}
 		onMounted(() => {
 			initAnswer();
 			initQuestion();
@@ -133,7 +145,7 @@ export default defineComponent({
 		return {
 			tableRef,
 			...toRefs(state),
-			clickExport
+			clickExport,
 		};
 	},
 })
