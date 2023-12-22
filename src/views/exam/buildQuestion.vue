@@ -127,16 +127,17 @@ export default defineComponent({
 			})
 		};
 		const addTwoSpace = (str) => {
-			const aArr = [];
+			str = str.trim();
+			// 每间隔4个字符加两个空格
+			let newStr = '';
 			for (let i = 0; i < str.length; i++) {
-				if (i % 2 === 0) {
-					aArr.push(str[i]);
+				if (i % 4 === 0 && i !== 0) {
+					newStr += '  ' + str[i];
 				} else {
-					aArr.push(str[i]);
-					aArr.push(' ');
+					newStr += str[i];
 				}
 			}
-			return aArr.join('');
+			return newStr;
 		}
 		onMounted(() => {
 			initAnswer();
