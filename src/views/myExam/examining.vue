@@ -26,10 +26,11 @@
 						</div>
 						<div class='list-item-box'>
 							<div class='list-item' v-for='(item, index) in currentQuestionInfo.questionItemList' :key='item.id'>
-								<el-radio-group v-model='chooseAnswer' @change='changeAnswer(item.id)'>
+								<el-checkbox @change='changeCheckAnswer' v-if='currentQuestionInfo.type === 2' v-model="item.check" :label="itemIndex[index]" />
+								<el-radio-group v-else v-model='chooseAnswer' @change='changeAnswer(item.id)'>
 									<el-radio  :label="item.id" size="default">{{itemIndex[index] + '. '}}</el-radio>
 								</el-radio-group>
-								<span class='item' v-html='item.name'></span>
+								<span :class='["item", currentQuestionInfo.type === 2 ? "check-item" : ""]' v-html='item.name'></span>
 							</div>
 						</div>
 					</div>
@@ -213,6 +214,15 @@ export default defineComponent({
 		const changeAnswer = itemId => {
 			state.answerMap[state.currentQuestionInfo.id] = itemId;
 		};
+		const changeCheckAnswer = () => {
+			const answerArr = [];
+			state.currentQuestionInfo.questionItemList.map(item => {
+				if (item.check) {
+					answerArr.push(item.id)
+				}
+			})
+			state.answerMap[state.currentQuestionInfo.id] = answerArr.join(',');
+		}
 		const clickSubmitPaper = () => {
 			if (Object.keys(state.answerMap).length !== ~~state.paperInfo.paper.questionCount) {
 				state.tipTitle = '试题还未答完，是否确定提交!';
@@ -249,6 +259,7 @@ export default defineComponent({
 			clickConfirmClose,
 			clickCancelClose,
 			clickViewOrigin,
+			changeCheckAnswer,
 			viewImgModalRef
 		}
 	}
@@ -340,6 +351,9 @@ export default defineComponent({
 											display: inline-block;
 										}
 									}
+								}
+								.check-item{
+									margin-top: 12px;
 								}
 							}
 						}
