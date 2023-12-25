@@ -150,7 +150,7 @@ const state = reactive({
 		{ text: '困难', value: 3 },
 	],
 	itemIndex: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-	determineList: ['对', '错']
+	determineList: ['正确', '错误']
 });
 const clickCancel = () => {
 	emits('clickCancel', false);
@@ -186,6 +186,9 @@ const clickConfirm = () => {
 			}
 			formData.questionUrl = state.ruleForm.questionUrl.map(item => item.url).join(',');
 			formData.analysisUrl = state.ruleForm.analysisUrl.map(item => item.url).join(',');
+			if (formData.type === 3) {
+				formData.answer = formData.answer === '正确' ? 'A' : 'B';
+			}
 			postAction(state.ruleForm.id ? updateQuestionApi : createQuestionApi, formData).then(res => {
 				if (res.status === StatusEnum.SUCCESS) {
 					ElMessage.success(res.message);
@@ -234,7 +237,11 @@ onMounted(() => {
 				state.ruleForm = other.formatFormMap(state.ruleForm, res.data) as any;
 				res.data.questionItemList.map((item, index) => {
 					if (item.id === state.ruleForm.answer) {
-						state.ruleForm.answer = state.itemIndex[index];
+						if (state.ruleForm.type === 1) {
+							state.ruleForm.answer = state.itemIndex[index];
+						} else if (state.ruleForm.type === 3) {
+							state.ruleForm.answer = state.determineList[index];
+						}
 					}
 				})
 				questionEditorRef.value.editorRef.setHtml(state.ruleForm.question);
