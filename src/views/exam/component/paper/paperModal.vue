@@ -44,8 +44,8 @@
 										</ul>
 										<div class='answer'>
 											答案：
-											<span v-if='[1, 3, "1", "3"].includes(ele.type)'>{{state.itemIndex[ele.answerIndex]}}</span>
-											<span v-if='[2, "2"].includes(ele.type)'>
+											<span v-if='[1, 3].includes(ele.type)'>{{state.itemIndex[ele.answerIndex]}}</span>
+											<span v-if='[2].includes(ele.type)'>
 												{{(ele.answerIndex || []).map(item => state.itemIndex[item]).join('、')}}
 											</span>
 										</div>

@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { nextTick, reactive } from 'vue';
 import { uploadAction } from '/@/api/common';
 import { StatusEnum } from '/@/common/status.enum';
 import { ElMessage } from 'element-plus';
@@ -107,6 +107,9 @@ const closeDialog = () => {
 };
 const openDialog = () => {
 	state.isShowDialog = true;
+	nextTick(() => {
+		state.fileMap = null;
+	});
 };
 const clickDownloadTemplate = () => {
 	window.open(state.baseUrl + downloadQuestionTemplateApi);
