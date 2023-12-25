@@ -13,7 +13,7 @@
 				</el-form-item>
 				<el-form-item label="试题分类" prop="questionType">
 					<el-select class='w100' v-model='state.ruleForm.questionType' clearable>
-						<el-option v-for='item in props.questionTypeList' :disabled='state.selectedQuestionType.includes(item.id)' :key='item.id' :label='item.name' :value='item.id'></el-option>
+						<el-option v-for='item in props.questionTypeList' :key='item.id' :label='item.name' :value='item.id'></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label='抽题数' prop='randomCount'>
@@ -54,7 +54,11 @@ const state = reactive({
 		questionType: '',
 		randomCount: 1
 	},
-	rules: {},
+	rules: {
+		questionType: [
+			{ required: true, message: '请选择试题分类', trigger: 'blur' }
+		],
+	},
 	typeList: [
 		{ text: '单选题', value: 1 },
 		{ text: '多选题', value: 2 },
@@ -71,14 +75,18 @@ const openDialog = data => {
 	state.selectedQuestionType = data.selectedQuestionType;
 };
 const clickConfirm = () => {
-	postAction(randomChoseQuestionApi, {
-		type: state.ruleForm.type,
-		questionType: state.ruleForm.questionType,
-		randomCount: state.ruleForm.randomCount
-	}).then(res => {
-		if (res.status === StatusEnum.SUCCESS) {
-			emits('clickConfirmChoose', res.data);
-			state.isShowDialog = false;
+	formRef.value.validate((valid: boolean) =>{
+		if (valid) {
+			postAction(randomChoseQuestionApi, {
+				type: state.ruleForm.type,
+				questionType: state.ruleForm.questionType,
+				randomCount: state.ruleForm.randomCount
+			}).then(res => {
+				if (res.status === StatusEnum.SUCCESS) {
+					emits('clickConfirmChoose', res.data);
+					state.isShowDialog = false;
+				}
+			})
 		}
 	})
 };

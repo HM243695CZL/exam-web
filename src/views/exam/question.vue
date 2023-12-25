@@ -22,7 +22,7 @@
 					@clickBatchDelete='clickBatchDelete'
 				>
 					<template #left>
-						<el-button class='mr10' size='default' @click="clickImport">
+						<el-button v-if='!$props.isChooseQuestion' class='mr10' size='default' @click="clickImport">
 							<el-icon>
 								<ele-Upload />
 							</el-icon>

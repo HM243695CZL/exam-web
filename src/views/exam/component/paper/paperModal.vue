@@ -43,7 +43,11 @@
 											</li>
 										</ul>
 										<div class='answer'>
-											答案：{{state.itemIndex[ele.answerIndex]}}
+											答案：
+											<span v-if='[1, 3, "1", "3"].includes(ele.type)'>{{state.itemIndex[ele.answerIndex]}}</span>
+											<span v-if='[2, "2"].includes(ele.type)'>
+												{{(ele.answerIndex || []).map(item => state.itemIndex[item]).join('、')}}
+											</span>
 										</div>
 										<div class='analysis'>
 											解析：
@@ -69,9 +73,9 @@
 						</div>
 						<div class='question-btn'>
 							<div class='question-item'>
-								<div class='question single' @click='clickSingle'>单选题</div>
-<!--								<div class='question multiple'>多选题</div>-->
-<!--								<div class='question determine'>判断题</div>-->
+								<div class='question single' @click='addQuestion(1)'>单选题</div>
+								<div class='question multiple' @click='addQuestion(2)'>多选题</div>
+								<div class='question determine' @click='addQuestion(3)'>判断题</div>
 							</div>
 						</div>
 					</div>
@@ -116,7 +120,7 @@
 			@clickConfirmChoose='clickConfirmChoose'
 		/>
 		<RandomChooseQuestionModal
-			:question-type-list='props.questionTypeList'
+			:question-type-list='questionTypeList'
 			ref='randomChooseRef'
 			@clickConfirmChoose='clickConfirmChoose'
 		/>
@@ -174,23 +178,46 @@ const getPaperInfo = () => {
 			state.ruleForm.timeLimit = res.data.paper.timeLimit;
 			state.ruleForm.questionBigType = [];
 			res.data.questionBigList.map(item => {
+				(item.questionList || []).map(ele => {
+					ele.questionItemList.map((e, index) => {
+						if (ele.type === 2) {
+							if (ele.answer.split(',').includes(e.id)) {
+								if (ele.answerIndex === undefined) {
+									ele.answerIndex = [index];
+								} else {
+									ele.answerIndex.push(index);
+								}
+							}
+						} else {
+							if (e.id === ele.answer) {
+								ele.answerIndex = index;
+							}
+						}
+					})
+				});
 				state.ruleForm.questionBigType.push({
 					key: item.bigId,
 					name: item.bigName,
 					type: item.type,
-					questionList: item.questionList,
+					questionList: item.questionList || [],
 					questionScore: item.questionScore
 				})
 			});
+			console.log(state.ruleForm.questionBigType);
 			renderScoreInfo();
 		}
 	});
 }
-const clickSingle = () => {
+const addQuestion = type => {
+	const typeMap = {
+		1: '、单选题',
+		2: '、多选题',
+		3: '、判断题',
+	}
 	state.ruleForm.questionBigType.push({
 		key: new Date().getTime(),
-		name: state.upperIndex[state.ruleForm.questionBigType.length] + '、单选题',
-		type: 1,
+		name: state.upperIndex[state.ruleForm.questionBigType.length] + typeMap[type],
+		type,
 		questionList: [],
 		questionScore: 0
 	})
@@ -226,8 +253,18 @@ const clickConfirmChoose = data => {
 			data.map(ele => {
 				if (!arr.includes(ele.id)) {
 					ele.questionItemList.map((e, index) => {
-						if (e.id === ele.answer) {
-							ele.answerIndex = index;
+						if (ele.type === 2) {
+							if (ele.answer.split(',').includes(e.id)) {
+								if (ele.answerIndex === undefined) {
+									ele.answerIndex = [index];
+								} else {
+									ele.answerIndex.push(index);
+								}
+							}
+						} else {
+							if (e.id === ele.answer) {
+								ele.answerIndex = index;
+							}
 						}
 					})
 					item.questionList.push(ele);

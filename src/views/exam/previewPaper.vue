@@ -179,7 +179,7 @@ export default defineComponent({
 							position: relative;
 							.view-origin{
 								position: absolute;
-								top: 20px;
+								top: 30px;
 								right: 10px;
 							}
 							.index-number{
