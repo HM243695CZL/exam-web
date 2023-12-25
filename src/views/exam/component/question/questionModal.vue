@@ -261,16 +261,16 @@ onMounted(() => {
 				}
 				if (state.ruleForm.type === 2) {
 					const answerIndex = [];
-					state.itemIndex.map((item, index) => {
-						if (state.ruleForm.answer.split(',').includes(item)) {
+					state.ruleForm.questionItemList.map((item, index) => {
+						if (state.ruleForm.answer.split(',').includes(item.id)) {
 							answerIndex.push(index);
 						}
-					})
+					});
 					state.ruleForm.questionItemList.map((item, index) => {
 						if (answerIndex.includes(index)) {
 							item.check = true;
 						}
-					})
+					});
 				}
 			}
 		});
