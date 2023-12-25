@@ -94,6 +94,7 @@ onMounted(() => {
 .home-container {
 	height: 100%;
 	background: #f00;
+	overflow: auto;
 	.tab-list{
 		display: flex;
 		justify-content: center;
