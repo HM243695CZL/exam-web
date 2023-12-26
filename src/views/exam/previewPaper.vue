@@ -24,10 +24,17 @@
 						</div>
 						<div class='view-answer' v-if='isRecord'>
 							<div class='your-answer'>
-								你的答案：<span>{{itemIndex[ele.currentUserAnswerIndex]}}</span>
+								你的答案：
+								<span v-if='ele.type === 2'>
+									{{ele.userAnswerList.map(e => itemIndex[e]).join(',')}}
+								</span>
+								<span v-else>{{itemIndex[ele.currentUserAnswerIndex]}}</span>
 								<div class='result'>
 									<div class='yes' v-if='ele.answer === ele.currentUserAnswer'>
 										<img :src='allRightImg' alt=''>
+									</div>
+									<div class='half-yes' v-else-if='ele.type === 2 && arrContain(ele.answer.split(","), ele.currentUserAnswer.split(","))'>
+										<img :src='halfYesImg' alt=''>
 									</div>
 									<div class='no' v-else>
 										<img :src='forkImg' alt=''>
@@ -35,7 +42,11 @@
 								</div>
 							</div>
 							<div class='correct-answer'>
-								正确答案：<span>{{itemIndex[ele.answerIndex]}}</span>
+								正确答案：
+								<span v-if='ele.type === 2'>
+									{{ele.correctAnswerList.map(e => itemIndex[e]).join(',')}}
+								</span>
+								<span v-else>{{itemIndex[ele.answerIndex]}}</span>
 							</div>
 							<div class='analysis'>
 								解析：
@@ -65,7 +76,8 @@ import { previewPaperApi, viewPaperApi } from '/@/api/exam/paper';
 import { StatusEnum } from '/@/common/status.enum';
 import other from '/@/utils/other';
 import allRightImg from '/@/assets/img/all-right.png';
-import forkImg from '/@/assets/img/fork.png'
+import forkImg from '/@/assets/img/fork.png';
+import halfYesImg from '/@/assets/img/half-yes.png';
 import ViewImgModal from '/@/components/ViewImgModal/index.vue';
 
 export default defineComponent({
@@ -85,7 +97,8 @@ export default defineComponent({
 			isRecord: false,
 			examInfo: {} as any,
 			allRightImg,
-			forkImg
+			forkImg,
+			halfYesImg
 		});
 		const getPaperInfo = () => {
 			getAction((state.isRecord ? viewPaperApi : previewPaperApi) + '/' + state.paperId, '').then(res => {
@@ -96,16 +109,29 @@ export default defineComponent({
 					state.paperInfo.questionBigList = questionBigList;
 					state.paperInfo.questionBigList.map(item => {
 						item.questionList.map(ele => {
+							const userAnswerList = [];
+							const correctAnswerList = [];
 							ele.questionItemList.map((e, index) => {
-								if (ele.currentUserAnswer === e.id) {
-									ele.currentUserAnswerIndex = index;
+								if (ele.type === 2) {
+									if (ele.currentUserAnswer.indexOf(e.id) > -1) {
+										userAnswerList.push(index);
+									}
+									if (ele.answer.indexOf(e.id) > -1) {
+										correctAnswerList.push(index);
+									}
+								} else {
+									if (ele.currentUserAnswer === e.id) {
+										ele.currentUserAnswerIndex = index;
+									}
+									if (ele.answer === e.id) {
+										ele.answerIndex = index;
+									}
 								}
-								if (ele.answer === e.id) {
-									ele.answerIndex = index;
-								}
-							})
+							});
+							ele.userAnswerList = userAnswerList;
+							ele.correctAnswerList = correctAnswerList;
 						})
-					})
+					});
 				}
 			})
 		};
@@ -122,6 +148,15 @@ export default defineComponent({
 		const clickBack = () => {
 			window.history.back();
 		};
+		// 判断一个数组是否包含另一个数组
+		const arrContain = (arr1, arr2) => {
+			if (!(arr1 instanceof Array) || !(arr2 instanceof Array)) return false;
+			if (arr1.length < arr2.length) return false;
+			for (let i = 0; i < arr2.length; i++) {
+				if (arr1.indexOf(arr2[i]) === -1) return false;
+			}
+			return true;
+		};
 		onMounted(() => {
 			const urlMap = other.params2Obj(window.location.href) as any;
 			state.paperId = urlMap.paperId;
@@ -133,7 +168,8 @@ export default defineComponent({
 			...toRefs(state),
 			clickBack,
 			clickViewOrigin,
-			viewImgModalRef
+			viewImgModalRef,
+			arrContain
 		}
 	}
 });
@@ -232,14 +268,6 @@ export default defineComponent({
 								position: absolute;
 								top: 0;
 								right: 20px;
-								.yes{
-									font-size: 30px;
-									color: #3eaf7c;
-								}
-								.no{
-									font-size: 30px;
-									color: #dd4a68;
-								}
 								img{
 									width: 100px;
 									height: 100px;
