@@ -55,6 +55,11 @@
 					</div>
 				</div>
 			</div>
+			<PaginationCommon
+				:page-info='pageInfo'
+				@changePageSize='changePageSize'
+				@changePageIndex='changePageIndex'
+			/>
 		</div>
 		<WrongBookModal ref='wrongBookModalRef' />
 	</div>
