@@ -1,5 +1,5 @@
 <template>
-	<div class="home-container layout-pd">
+	<div class="home-container layout-pd" v-if='false'>
 		<div class='tab-list'>
 			<div :class='["item", item.value === state.currentTab ? "active" : ""]'
 					 @click='changeTab(item)'
